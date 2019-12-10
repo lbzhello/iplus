@@ -1,46 +1,58 @@
 package xyz.liujin.iplus.observer;
 
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import org.junit.jupiter.api.Test;
+import org.reactivestreams.Publisher;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.rmi.activation.Activatable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MyObserver {
-    @Test
-    public void mainTest() {
+
+    public static void main(String[] args) {
         printCurrentThread("main");
-        System.out.println(observableTest());
+        System.out.println(new MyObserver().observableTest());
     }
 
-    @Test
     public String observableTest() {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
-        Observable.just("hello world")
-                .map(text -> {
-                    printCurrentThread("map");
-                    Path tempFile = Files.createTempFile(null, ".txt");
-                    Files.writeString(tempFile, text);
-                    try {
 
-                        String none = null;
-                        none.length();
-                    } catch (Throwable throwable) {
-                        System.out.println("========== error =============");
-                    }
-                    return tempFile;
+        Flowable.just("hello world")
+                .flatMap(text -> {
+                    printCurrentThread("flatMap");
+                    return Flowable.fromArray(text.split(" "));
                 })
-//                .subscribeOn(Schedulers.from(executorService))
-//                .observeOn(Schedulers.from(executorService))
-                .subscribe(file -> {
-                    printCurrentThread("subscribe");
-                    System.out.println(Files.readAllLines(file));
+                .map(item -> {
+                    printCurrentThread("map1");
+                    return item;
+                })
+                // 设置默认的调度线程，与位置无关
+                .subscribeOn(Schedulers.from(executorService))
+                // 设置之后在哪里调度
+                .observeOn(Schedulers.newThread())
+                .map(item -> {
+                    printCurrentThread("map2");
+                    return item;
+                })
+                .doFinally(() ->{
+                    printCurrentThread("doFinally");
+                })
+                .subscribe(item -> {
+                    printCurrentThread("onNext");
+                    System.out.println(item);
+//                    throw new Exception("333");
                 }, throwable ->  {
-                    System.out.println(throwable.getMessage());
+                    printCurrentThread("onError");
+                    System.out.println(throwable);
+                }, () -> {
+                    printCurrentThread("onComplete");
                 });
         return "end";
     }
