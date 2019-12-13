@@ -25,10 +25,10 @@ public class ReactorTest {
     @Test
     public void fluxTest() {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
-        Flux.just(1, 22, 32)
+        Flux.fromArray(getArray())
                 .map(ele -> {
                     TestHelper.printCurrentThread("map1");
-                    ele.toString().charAt(1);
+                    ele.charAt(1);
                     return ele;
                 })
                 .doFinally(signalType -> {
@@ -51,5 +51,10 @@ public class ReactorTest {
                     TestHelper.printCurrentThread("onError");
                     System.out.println(throwable.getMessage());
                 });
+    }
+
+    public String[] getArray() {
+        TestHelper.printCurrentThread("getArray");
+        return new String[]{"aaa", "bbb", "ccc"};
     }
 }
