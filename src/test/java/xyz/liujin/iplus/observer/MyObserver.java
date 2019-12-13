@@ -1,13 +1,13 @@
 package xyz.liujin.iplus.observer;
 
-import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
+import io.reactivex.*;
 import io.reactivex.functions.Consumer;
+import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 
+import java.awt.datatransfer.FlavorListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.rmi.activation.Activatable;
@@ -24,13 +24,14 @@ public class MyObserver {
     public String observableTest() {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
 
-        Flowable.just("hello world")
+        Flowable.just("hello2 world")
                 .flatMap(text -> {
                     printCurrentThread("flatMap");
                     return Flowable.fromArray(text.split(" "));
                 })
                 .map(item -> {
                     printCurrentThread("map1");
+                    item.charAt(6);
                     return item;
                 })
                 // 设置默认的调度线程，与位置无关
@@ -44,6 +45,7 @@ public class MyObserver {
                 .doFinally(() ->{
                     printCurrentThread("doFinally");
                 })
+                .onErrorReturnItem("error....")
                 .subscribe(item -> {
                     printCurrentThread("onNext");
                     System.out.println(item);
