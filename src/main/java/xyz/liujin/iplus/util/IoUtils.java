@@ -1,9 +1,9 @@
 package xyz.liujin.iplus.util;
 
-import com.google.common.io.Files;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
+import java.nio.file.Files;
 
 public class IoUtils {
     private static final int BUFFER_SIZE = 4096;
@@ -56,7 +56,10 @@ public class IoUtils {
     }
 
     public static final void copy() {
+        char[] chars = {};
+        for (char c : chars) {
 
+        }
     }
 
 }

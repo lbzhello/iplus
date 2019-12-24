@@ -2,6 +2,9 @@ package xyz.liujin.iplus.util;
 
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 public class StringUtils {
 
@@ -51,5 +54,18 @@ public class StringUtils {
      */
     public static boolean isNotBlank(@Nullable CharSequence cs) {
         return !isBlank(cs);
+    }
+
+    public static <T> String toString(T obj) {
+        return format(obj, it -> it.toString());
+    }
+
+    public static <T> String format(T obj, Function<T, String> formatter) {
+        return obj == null ? "" : formatter.apply(obj);
+    }
+
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<>();
+        format(list, it -> it.toString());
     }
 }

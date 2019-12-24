@@ -1,17 +1,27 @@
 package xyz.liujin.iplus;
 
+import io.netty.util.concurrent.CompleteFuture;
+import io.reactivex.Flowable;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
+import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxProcessor;
 import reactor.core.publisher.FluxSink;
 import reactor.core.scheduler.Schedulers;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.rmi.activation.Activatable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionService;
 import java.util.function.Consumer;
 
 /**
@@ -31,12 +41,48 @@ public class LocalTest {
 
     @Test
     public void localTest() {
-        System.out.println(String.valueOf(null));
+        RestTemplate
     }
 
     @Test
-    public void futureTest() {
+    public void webClientTest() {
+        WebClient.builder().build()
+        WebClient.create().get().uri("http://www.baidu.com").exchange().flatMap(it -> it.bodyToMono(String.class)).doOnNext(it -> System.out.println(it)).block();
+        WebClient.create().get().uri("http://www.baidu.com").retrieve().bodyToMono(String.class).doOnNext(it -> System.out.println(it)).block();
+    }
 
+    @Test
+    public void processorTest() {
+        EmitterProcessor<Object> emitterProcessor = EmitterProcessor.create();
+        emitterProcessor.publishOn(Schedulers.newElastic("newThread")).map(it -> {
+            TestHelper.printCurrentThread("map");
+            return it;
+        }).onErrorContinue((e, it) -> {
+            System.out.println(it);
+        }).subscribe(it -> {
+            TestHelper.printCurrentThread("subscribe");
+            System.out.println(it);
+        }, e -> {
+            TestHelper.printCurrentThread("onError");
+            System.out.println(e.getMessage());
+        });
+
+        emitterProcessor.onNext(1);
+        emitterProcessor.onNext(1);
+        emitterProcessor.onNext(1);
+        emitterProcessor.onComplete();
+
+
+    }
+
+    @Test
+    public void flowableTest() {
+        Flowable.just(1, 2, 4)
+
+                .subscribe(it -> System.out.println(it));
+
+        Flux.just(1, 2, 4)
+                .subscribe(it -> System.out.println(it));
     }
 
     @Test
@@ -46,6 +92,7 @@ public class LocalTest {
             it.onNext("23");
 //            it.onError(new Throwable("error"));
             it.onNext("24");
+            it.onComplete();
             // from 不支持异步 用 create
         }).publishOn(Schedulers.newElastic("my")).map(it -> {
             System.out.println(it);
@@ -108,6 +155,15 @@ public class LocalTest {
         }, e -> {
             TestHelper.printCurrentThread("onError");
             System.out.println(e.getMessage());
+        });
+    }
+
+    @Test
+    public void fluxTest() {
+        Flux.from(it -> {
+            it.onNext("hello");
+        }).subscribe(it -> {
+            System.out.println(it);
         });
     }
 
