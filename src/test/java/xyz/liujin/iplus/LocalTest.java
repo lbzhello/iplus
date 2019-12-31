@@ -1,27 +1,17 @@
 package xyz.liujin.iplus;
 
-import io.netty.util.concurrent.CompleteFuture;
 import io.reactivex.Flowable;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.springframework.http.HttpMethod;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxProcessor;
 import reactor.core.publisher.FluxSink;
 import reactor.core.scheduler.Schedulers;
+import xyz.liujin.iplus.lombok.Foo;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.rmi.activation.Activatable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionService;
 import java.util.function.Consumer;
 
 /**
@@ -41,12 +31,31 @@ public class LocalTest {
 
     @Test
     public void localTest() {
-        RestTemplate
+
+    }
+
+    @Test
+    public void groovyTest() {
+
+    }
+
+    @Test
+    public void lombokTest() {
+        Foo foo1 = new Foo(); // 生成了无参构造器
+        foo1.setAge(2); // 生成了 setter
+
+        Foo foo2 = new Foo();
+        foo2.setAge(2);
+
+        // 结果为 true, 因为根据所有的字段（非 transient）重写了 equals 方法
+        System.out.println(foo1.equals(foo2));
+
+        // Foo(name=null, age=2) 重写了 toString 方法
+        System.out.println(foo1.toString());
     }
 
     @Test
     public void webClientTest() {
-        WebClient.builder().build()
         WebClient.create().get().uri("http://www.baidu.com").exchange().flatMap(it -> it.bodyToMono(String.class)).doOnNext(it -> System.out.println(it)).block();
         WebClient.create().get().uri("http://www.baidu.com").retrieve().bodyToMono(String.class).doOnNext(it -> System.out.println(it)).block();
     }
