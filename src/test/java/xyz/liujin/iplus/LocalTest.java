@@ -1,5 +1,7 @@
 package xyz.liujin.iplus;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Streams;
 import io.reactivex.Flowable;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
@@ -12,7 +14,10 @@ import xyz.liujin.iplus.lombok.Foo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * HIK所有，<br/>
@@ -31,7 +36,21 @@ public class LocalTest {
 
     @Test
     public void localTest() {
+        Flux.just('1', '2', '*', '@', '5', '6', '(', '(', '(', '7')
+                .filter(it -> it == '@')
+                .window(it -> {
+                    it.onNext(7);
+                    it.onNext('7');
+                })
+                .flatMap(it -> it)
+                .subscribe(it -> {
+                    if (it == '(') {
+                        Flux.create(sink ->{
 
+                        });
+                    }
+                    System.out.println(it);
+                });
     }
 
     @Test

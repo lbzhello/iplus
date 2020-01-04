@@ -1,3 +1,5 @@
+import reactor.core.publisher.Flux
+
 // 读取文件
 def file = new File("C:/tmp.txt")
 file.eachLine {
@@ -48,4 +50,20 @@ def process = "cmd /c ls".execute()
 process.in.getText("gbk").eachLine { line ->
     println line
 }
+
+println '------ List -------'
+
+def list = [5, 6, 7, 8]
+assert list.get(2) == 7
+assert list[2] == 7
+assert list instanceof java.util.List
+
+def emptyList = []
+assert emptyList.size() == 0
+emptyList.add(5)
+assert emptyList.size() == 1
+
+println list.set(0, 10)
+println list.get(0)
+
 
