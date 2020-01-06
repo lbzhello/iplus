@@ -3,6 +3,7 @@ package xyz.liujin.iplus;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import io.reactivex.Flowable;
+import org.apache.tomcat.jni.Thread;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -36,6 +37,11 @@ public class LocalTest {
 
     @Test
     public void localTest() {
+
+    }
+
+    @Test
+    public void windowTest() {
         Flux.just('1', '2', '*', '@', '5', '6', '(', '(', '(', '7')
                 .filter(it -> it == '@')
                 .window(it -> {
