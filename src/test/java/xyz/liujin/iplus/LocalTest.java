@@ -13,6 +13,7 @@ import reactor.core.publisher.FluxSink;
 import reactor.core.scheduler.Schedulers;
 import xyz.liujin.iplus.lombok.Foo;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,7 +38,10 @@ public class LocalTest {
 
     @Test
     public void localTest() {
-
+        Integer[] integers = {1, 2, 3, 4};
+        Arrays.stream(integers).filter(it -> it >= 2).forEach(it -> System.out.println(it));
+        LocalDateTime localDateTime = LocalDateTime.now();
+        System.out.println(localDateTime.isBefore(localDateTime));
     }
 
     @Test
@@ -193,11 +197,31 @@ public class LocalTest {
     }
 
     @Test
-    public void fluxTest() {
-        Flux.from(it -> {
-            it.onNext("hello");
-        }).subscribe(it -> {
+    public void publishSubscribeTest() {
+        Flux.create(it -> {
+            TestHelper.printCurrentThread("from");
+            Arrays.asList(1, 2, 3).forEach(elem -> {
+                System.out.println(elem);
+                it.next(elem);
+            });
+            // 需要加上这句，否则无法处理完成
+            it.complete();
+        }).publishOn(Schedulers.newElastic("publishThread")).map(it -> {
+            TestHelper.printCurrentThread("map1");
+            return it;
+        // subscribeOn 设定默认线程，与所处位置无关
+        // 因此下面的 Map2 依然运行在 publishOn 线程
+        }).subscribeOn(Schedulers.newElastic("subscribeThread")).map(it -> {
+            TestHelper.printCurrentThread("map2");
+            return it;
+        }).onErrorContinue((e, it) -> {
             System.out.println(it);
+        }).subscribe(it -> {
+            TestHelper.printCurrentThread("subscribe");
+            System.out.println(it);
+        }, e -> {
+            TestHelper.printCurrentThread("onError");
+            System.out.println(e.getMessage());
         });
     }
 
