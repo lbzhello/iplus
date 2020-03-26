@@ -5,15 +5,22 @@ import javax.annotation.Nullable;
 
 public class ArrayUtils {
     /**
-     * Determine whether the given array is empty:
-     * i.e. {@code null} or of zero length.
-     * @param array the array to check
+     * Return {@code true} if the supplied Array is {@code null} or empty.
+     * Otherwise, return {@code false}.
+     * @param array the Array to check
+     * @return whether the given Array is empty
      * @see ObjectUtils#isEmpty(Object)
      */
     public static <E> boolean isEmpty(@Nullable E[] array) {
         return (array == null || array.length == 0);
     }
 
+    /**
+     * Return array consist of the given elements
+     * @param elements
+     * @param <E> the element type of the array
+     * @return array consist of the given elements
+     */
     public static <E> E[] of(@Nonnull E... elements) {
         return elements;
     }

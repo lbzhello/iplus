@@ -1,20 +1,22 @@
 package xyz.liujin.iplus.util;
 
-import org.springframework.util.FileCopyUtils;
-
 import java.io.*;
-import java.nio.file.Files;
 
 public class IoUtils {
     private static final int BUFFER_SIZE = 4096;
 
     /**
-     * Reads all bytes in an input stream and writes them out an output stream
+     * Copy the contents of the given InputStream to the given OutputStream.
+     * @param in the stream to copy from
+     * @param out the stream to copy to
+     * @return the number of bytes copied
+     * @throws IOException in case of I/O errors
      */
-    public static long copy(InputStream in, OutputStream out)
-            throws IOException
-    {
-        long count = 0L;
+    public static final int copy(InputStream in, OutputStream out) throws IOException {
+        Assert.notNull(in, "No input File specified");
+        Assert.notNull(out, "No output File specified");
+
+        int count = 0;
         byte[] buf = new byte[BUFFER_SIZE];
         int n;
         while ((n = in.read(buf)) > 0) {
@@ -27,39 +29,25 @@ public class IoUtils {
 
     /**
      * Reads all bytes from an reader and writes them to an writer
+     * @param reader the stream to copy from
+     * @param writer the stream to copy to
+     * @return the number of chars copied
+     * @throws IOException in case of I/O errors
      */
-    public static int copy(Reader in, Writer out) throws IOException {
-        Assert.notNull(in, "No Reader specified");
-        Assert.notNull(out, "No Writer specified");
+    public static final int copy(Reader reader, Writer writer) throws IOException {
+        Assert.notNull(reader, "No Reader specified");
+        Assert.notNull(writer, "No Writer specified");
 
-        try {
-            int byteCount = 0;
-            char[] buffer = new char[BUFFER_SIZE];
-            int bytesRead;
-            while ((bytesRead = in.read(buffer)) != -1) {
-                out.write(buffer, 0, bytesRead);
-                byteCount += bytesRead;
-            }
-            out.flush();
-            return byteCount;
-        } finally {
-            try {
-                in.close();
-            } catch (IOException ex) {
-            }
-
-            try {
-                out.close();
-            } catch (IOException ex) {
-            }
+        int count = 0;
+        char[] buffer = new char[BUFFER_SIZE];
+        int n;
+        while ((n = reader.read(buffer)) != -1) {
+            writer.write(buffer, 0, n);
+            count += n;
         }
+        writer.flush();
+        return count;
     }
 
-    public static final void copy() {
-        char[] chars = {};
-        for (char c : chars) {
-
-        }
-    }
 
 }
