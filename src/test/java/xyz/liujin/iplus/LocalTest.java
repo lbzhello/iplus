@@ -2,15 +2,20 @@ package xyz.liujin.iplus;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.reactivex.Flowable;
 import org.apache.tomcat.jni.Thread;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.scheduler.Schedulers;
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.tcp.SslProvider;
 import xyz.liujin.iplus.lombok.Foo;
 
 import java.time.LocalDateTime;
@@ -87,6 +92,13 @@ public class LocalTest {
     public void webClientTest() {
         WebClient.create().get().uri("http://www.baidu.com").exchange().flatMap(it -> it.bodyToMono(String.class)).doOnNext(it -> System.out.println(it)).block();
         WebClient.create().get().uri("http://www.baidu.com").retrieve().bodyToMono(String.class).doOnNext(it -> System.out.println(it)).block();
+    }
+
+    @Test
+    public void sslWebClientTest() {
+        WebClient.builder().clientConnector(new ReactorClientHttpConnector(HttpClient.create()
+                .secure(it -> it.sslContext(SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE))))).build()
+                .get().uri("http://www.baidu.com").retrieve().bodyToMono(String.class).doOnNext(it -> System.out.println(it)).block();
     }
 
     @Test
