@@ -1,11 +1,8 @@
 package xyz.liujin.iplus;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Streams;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.reactivex.Flowable;
-import org.apache.tomcat.jni.Thread;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -15,16 +12,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.scheduler.Schedulers;
 import reactor.netty.http.client.HttpClient;
-import reactor.netty.tcp.SslProvider;
 import xyz.liujin.iplus.lombok.Foo;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * HIK所有，<br/>
@@ -43,10 +35,7 @@ public class LocalTest {
 
     @Test
     public void localTest() {
-        Integer[] integers = {1, 2, 3, 4};
-        Arrays.stream(integers).filter(it -> it >= 2).forEach(it -> System.out.println(it));
-        LocalDateTime localDateTime = LocalDateTime.now();
-        System.out.println(localDateTime.isBefore(localDateTime));
+
     }
 
     @Test

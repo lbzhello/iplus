@@ -1,7 +1,5 @@
 package xyz.liujin.iplus.util;
 
-import org.springframework.util.FileCopyUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -36,6 +34,10 @@ public class FileUtils {
         IoUtils.copy(Files.newBufferedReader(file.toPath(), charset), writer);
 
         return writer.toString();
+    }
+
+    public static final String toString(File file, String charset) throws IOException {
+        return toString(file, Charset.forName(charset));
     }
 
     public static final String toString(File file) throws IOException {
