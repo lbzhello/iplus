@@ -16,7 +16,10 @@ import xyz.liujin.iplus.lombok.Foo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * HIK所有，<br/>
@@ -35,7 +38,19 @@ public class LocalTest {
 
     @Test
     public void localTest() {
+        Flux<Object> flux = Flux.from(it -> {
+            Stream.iterate(1, i -> i + 2).limit(5).forEach(each -> it.onNext(each));
+            it.onComplete();
+        });
 
+        flux.subscribe(it -> System.out.println(it));
+        flux.subscribe(it -> System.out.println(it));
+    }
+
+    @Test
+    public void streamTest() {
+        List<Integer> collect = Stream.iterate(1, it -> it * 2).limit(5).collect(Collectors.toList());
+        System.out.println();
     }
 
     @Test
