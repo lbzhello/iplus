@@ -1,23 +1,38 @@
 package xyz.liujin.iplus;
 
+import com.google.common.collect.Lists;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.reactivex.Flowable;
+import io.reactivex.internal.schedulers.ExecutorScheduler;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.EmitterProcessor;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxSink;
+import reactor.core.publisher.*;
 import reactor.core.scheduler.Schedulers;
 import reactor.netty.http.client.HttpClient;
 import xyz.liujin.iplus.lombok.Foo;
+import xyz.liujin.iplus.util.FileUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.file.Paths;
+import java.sql.SQLOutput;
+import java.time.Duration;
+import java.time.temporal.TemporalUnit;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,13 +53,10 @@ public class LocalTest {
 
     @Test
     public void localTest() {
-        Flux<Object> flux = Flux.from(it -> {
-            Stream.iterate(1, i -> i + 2).limit(5).forEach(each -> it.onNext(each));
-            it.onComplete();
-        });
+        ArrayList<String> list = Lists.newArrayList("dcb", "c22f", "c33", "f55");
+        Collections.sort(list);
+        System.out.println(list);
 
-        flux.subscribe(it -> System.out.println(it));
-        flux.subscribe(it -> System.out.println(it));
     }
 
     @Test
@@ -131,12 +143,215 @@ public class LocalTest {
 
     @Test
     public void flowableTest() {
-        Flowable.just(1, 2, 4)
+        Flowable.fromPublisher(it -> {
+            TestHelper.printCurrentThread("fromPublisher");
+            it.onNext(1);
+            it.onComplete();
+        })
 
-                .subscribe(it -> System.out.println(it));
+                .map(it -> {
+                    TestHelper.printCurrentThread("map");
+                    return it;
+                })
+                .doOnSubscribe(it -> {
+                    TestHelper.printCurrentThread("doOnSubscribe");
+                })
+                .doOnRequest(it -> {
+                    TestHelper.printCurrentThread("doOnRequest");
+                })
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(io.reactivex.schedulers.Schedulers.computation())
+                .subscribe(new Subscriber<Object>() {
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        TestHelper.printCurrentThread("onSubscribe");
+                        s.request(1000);
+                    }
 
-        Flux.just(1, 2, 4)
-                .subscribe(it -> System.out.println(it));
+                    @Override
+                    public void onNext(Object o) {
+                        TestHelper.printCurrentThread("onNext");
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    @Test
+    public void backPresureTest() {
+        EmitterProcessor<Object> emitterProcessor = EmitterProcessor.create();
+
+    }
+
+    @Test
+    public void completableFutureTest() throws ExecutionException, InterruptedException {
+        CompletableFuture.supplyAsync(() -> {
+            return "hello world";
+        }, Executors.newSingleThreadExecutor()).thenApply(it -> {
+            TestHelper.printCurrentThread("thenApply");
+            return it + 1;
+        });
+    }
+
+
+    /**
+     * 测试异步操作，将多个异步 Observable 结果合并成一个
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    @Test
+    public void zipTest() throws IOException, InterruptedException {
+
+        try (FileWriter fileWriter = new FileWriter("G:/tmp.txt")) {
+
+            Flux<String> flux1 = Flux.just("a", "b", "c", "d")
+                    .subscribeOn(Schedulers.newElastic("flux1"))
+                    .map(it -> {
+                        try {
+                            TestHelper.printCurrentThread("flux1");
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        return it;
+                    });
+
+            Flux<Long> flux2 = Flux.interval(Duration.ofSeconds(1))
+                    .subscribeOn(Schedulers.newElastic("flux2"))
+                    .map(it -> {
+                        TestHelper.printCurrentThread("flux2");
+                        return it;
+                    });
+
+            Flux.zip(flux1, flux2)
+                    .publishOn(Schedulers.newElastic("newThread"))
+                    .subscribe(it -> {
+                        TestHelper.printCurrentThread("zip");
+                        System.out.println(it);
+                    });
+
+            for (; ; ) {
+                Thread.sleep(1000);
+                TestHelper.printCurrentThread("current");
+            }
+        }
+
+    }
+
+    @Test
+    public void threadTest() {
+        Flux
+                .create(it -> {
+                    TestHelper.printCurrentThread("from");
+                    it.next(1);
+                    it.complete();
+                })
+                .doOnSubscribe(it -> TestHelper.printCurrentThread("doOnSubscribe1"))
+                .subscribeOn(Schedulers.newElastic("subscribeOn1"))
+                .doOnSubscribe(it -> TestHelper.printCurrentThread("doOnSubscribe2"))
+                .subscribeOn(Schedulers.newElastic("subscribeOn2"))
+                .doOnNext(it -> TestHelper.printCurrentThread("doOnNext1"))
+                .publishOn(Schedulers.newElastic("publishOn1"))
+                .doOnSubscribe(it -> TestHelper.printCurrentThread("doOnSubscribe3"))
+                .doOnNext(it -> TestHelper.printCurrentThread("doOnNext2"))
+                .subscribe(it -> TestHelper.printCurrentThread("subscribe"));
+    }
+
+    @Test
+    public void doOnEachTest() {
+        Mono.just(1)
+                .map(it -> {
+                    System.out.println("map");
+                    return it;
+                })
+                .doOnEach(it -> {
+                    System.out.println("it: " + it.get());
+                    System.out.println("doOnEach");
+                })
+                .doOnNext(it -> System.out.println("doOnNext"))
+                .doFinally(it -> System.out.println("doFinally"))
+                .subscribe(it -> System.out.println("subscribe"), it -> System.out.println("errorConsumer"));
+    }
+
+    @Test
+    public void rxTest() {
+        Flowable.just(1)
+                .doOnEach(it -> System.out.println("doOnEach"))
+                .doFinally(() -> System.out.println("doFinally"))
+                .subscribe(it -> System.out.println("subscribe"), it -> System.out.println("errorConsumer"));
+    }
+
+    @Test
+    public void finallyTest() {
+        Map<String, String> map = new HashMap<>();
+        Flux
+                .fromIterable(Collections.emptyList())
+//                .create(it -> {
+//            it.next(1);
+//            it.complete();
+//            throw new IllegalStateException("");
+//        })
+//                .doOnEach(it -> {
+////                    throw new IllegalStateException("hhhh");
+////                    return it;
+//                })
+
+//                .doOnError(it -> {
+//                    System.out.println("doOnError");
+//                })
+//                .onErrorContinue((it, o) -> {
+//                    System.out.println("onErrorContinue");
+//                })
+                .doFinally(it -> {
+                    System.out.println("doFinally");
+                })
+                .doOnSubscribe(it -> System.out.println("doOnSubscribe"))
+                .subscribe(it -> {
+//                    throw new IllegalStateException("sssss");
+                    System.out.println("consumer");
+                }, it -> System.out.println(it.getMessage()), () -> System.out.println("completeConsumer"));
+    }
+
+    @Test
+    public void justTest() {
+//        Flux.from(it -> {
+//            TestHelper.printCurrentThread("from");
+//            it.onNext("2");
+//            it.onNext("3");
+//            it.onNext("4");
+//            it.onNext("5");
+//            it.onComplete();
+////            throw new IllegalStateException("from-error");
+////            it.complete();
+//        })
+        Flux.just("1", "2", "3", "4")
+//                .subscribeOn(Schedulers.newElastic("subscribeThread"))
+                .doOnNext(it -> {
+                    if (it.equals("2")) {
+                        throw new IllegalStateException("map-error");
+                    }
+                })
+                .doOnError((t) -> System.out.println("doOnError: " + t.getMessage()))
+                .onErrorContinue((t, o) -> System.out.println("onErrorContinue: " + t.getMessage()))
+                .map(it -> {
+                    if (it.equals("3")) {
+                        throw new IllegalStateException("map-error");
+                    }
+                    return it;
+                })
+                .subscribe(it -> {
+                    System.out.println(it);
+//                    throw new IllegalStateException("subscribe-error");
+                }, it -> System.out.println("errorConsumer"));
+
     }
 
     @Test
@@ -198,7 +413,9 @@ public class LocalTest {
             Arrays.asList(1, 2, 3).forEach(elem -> it.next(elem));
             // 需要加上这句，否则无法处理完成
             it.complete();
-        }).publishOn(Schedulers.newElastic("newThread")).map(it -> {
+        })
+                .subscribeOn(Schedulers.newElastic("subscribeOn"))
+                .publishOn(Schedulers.newElastic("publishOnThread")).map(it -> {
             TestHelper.printCurrentThread("map");
             return it;
         }).onErrorContinue((e, it) -> {

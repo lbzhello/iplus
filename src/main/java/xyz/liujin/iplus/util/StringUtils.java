@@ -40,11 +40,11 @@ public class StringUtils {
 
         int len = cs.length();
         for (int i = 0; i < len; i++) {
-            if (Character.isWhitespace(cs.charAt(i))) {
-                return true;
+            if (!Character.isWhitespace(cs.charAt(i))) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     /**
