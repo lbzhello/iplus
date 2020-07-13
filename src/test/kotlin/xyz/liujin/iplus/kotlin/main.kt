@@ -37,7 +37,7 @@ fun parseLog(logFile: String, basePath: String): List<List<Any>>? {
                 val commitId = commitLines[0]
                 return@flatMap Flux.fromIterable(commitLines)
                         .skip(1)
-                        .filter {line -> StringUtils.isNotBlank(line)}
+                        .filter { line -> StringUtils.isNotBlank(line) }
                         .map { line -> line.split("\\s+".toRegex(), 2) }
                         // 修改的文件
                         .filter { line -> CommitFlag.isChangeLine(line) }
@@ -51,13 +51,13 @@ fun parseLog(logFile: String, basePath: String): List<List<Any>>? {
                 val rightPath = it[0][0]
 
                 val leftPath = if (basePath.endsWith("/")) {
-                    basePath.substring(0, basePath.length -1)
+                    basePath.substring(0, basePath.length - 1)
                 } else {
                     basePath
                 }
                 val fullPath = if (rightPath.startsWith("/")) {
                     leftPath + rightPath
-                } else{
+                } else {
                     "$leftPath/$rightPath"
                 }
                 listOf(fullPath, commids)
