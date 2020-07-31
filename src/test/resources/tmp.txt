@@ -1,0 +1,26 @@
+// 态势类型: 1 增幅，2 日增天数
+trendType;
+
+// 统计范围：0 station, 1 channel
+entranceType;
+
+// station 或 channel 编码
+entranceIndexCode;
+
+// 当前日增天数
+incDay;
+
+// 连续日增阈值
+incDayConf;
+
+// 当前增幅
+incPercent;
+
+// 增幅阈值
+incPercentConf;
+
+// 连续日增数据 date -> num
+dailyData;
+
+// 最近两天日增数据 date -> num
+twoDailyData;

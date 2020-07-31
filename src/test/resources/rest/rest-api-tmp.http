@@ -1,0 +1,21 @@
+### 统计分析查询接口
+### http://10.6.121.29:8080/sddp/api/v1/event/statistic/statistic/query
+### entranceType: 0-安检站，1-安检通道
+### statisticType：0-天，1-天/周，2-月，3-月/年
+### needSubTime：0-不包含，1-包含；例：统计周期为天，并且包含子时间查询，返回数据粒度要15分钟一条，否则为一天一条
+
+### 查询通道天/周统计数据
+GET http://10.41.49.242:6011/HikCStor/BestNode?SerialID=320285196&PoolID=&Replication=0
+Content-Type: application/json
+Authorization: hikcstor rY+VZ5jCQEFMbQUc:y/0rRVwMqszv+VLX3Jq/ZN/Ph2o=
+Token: ECACAAAQAABaEAi5NzeX0u2i3sVNM1cKraVApw1yKj9n0TCRGiKu9IIwehAHXOPA+OaPS+AqqaGhYk4wdyJGiwWj2T5f0aEor/chssf6fpNaNANUqv7zQjE1OTM2NjE2MzcyMjE=
+
+{}
+
+###### 查询通道天/周统计数据
+POST https://10.41.49.242:443/sdvs/scncg/resource/v1/ivms/query
+Content-Type: application/json
+Token: ECACAAAQAADvzwW0ZxuPU4TabpP2ce8lDh7upgzYhoVYHJUQuHJ+7hMy+dsX9tv1cWxPZmlSlJNNWIVqceCpHDxmAV4w/LcBvUmR4UNY4duiSpr+P8V7tTE1OTQyOTI2OTY2ODc=
+
+{}
+###
