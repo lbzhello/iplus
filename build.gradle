@@ -1,0 +1,56 @@
+plugins {
+	id 'org.springframework.boot' version '2.3.2.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+}
+
+group = 'xyz.liujin'
+version = '0.0.1-SNAPSHOT'
+
+sourceCompatibility = '11'
+
+// 所有项目共享配置
+allprojects {
+	apply plugin: "java"
+
+	repositories {
+		maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+		mavenCentral()
+		jcenter()
+	}
+}
+
+subprojects {
+	ext {
+		junitVersion = "4.11"
+		springVersion = "4.3.3.RELEASE"
+		jacksonVersion = "2.4.4"
+		compileJava.options.encoding = 'UTF-8'
+		compileTestJava.options.encoding = 'UTF-8'
+	}
+
+	dependencies {
+//		compile project(":iplus-dependencies")
+
+		// webflux -- reactor-core
+		compile group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: '2.3.2.RELEASE'
+
+		// RxJava3
+		compile group: 'io.reactivex.rxjava3', name: 'rxjava', version: '3.0.5'
+
+
+		// testCompile 无法通过 allprojects 或 subprojects 集成
+		testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.6.2'
+	}
+}
+
+dependencies {
+
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+
+test {
+	useJUnitPlatform()
+}

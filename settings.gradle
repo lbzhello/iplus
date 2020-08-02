@@ -1,0 +1,9 @@
+rootProject.name = 'iplus'
+include 'iplus-service'
+include 'iplus-util'
+include 'iplus-groovy'
+include 'iplus-kotlin'
+include 'iplus-start'
+include 'iplus-dependencies'
+include 'iplus-test'
+

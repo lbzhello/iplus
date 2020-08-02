@@ -1,0 +1,12 @@
+plugins {
+    id 'groovy'
+}
+
+group 'xyz.liujin'
+version '0.0.1-SNAPSHOT'
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.3.11'
+
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.6.2'
+}
