@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+
+  zookeeper:
+    image: liubaozhu/zookeeper
+    container_name: zookeeper
+    #depends_on:
+    # - ubuntu
+    # build: .
+    ports:
+      - 2181:2181
+    volumes:
+      - /d/data/zookeeper:/data/zookeeper
+    command: ["sh", "-c", "/home/zookeeper/start.sh"]
+
+  db:
+    image: mysql
+    container_name: mysql
+    ports:
+      - 3306:3306
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - /d/data/mysql:/data/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+
+  web:
+    image: nginx
+    container_name: nginx
+    volumes:
+      - ../caiwei-react/build:/usr/share/nginx/html
+      - ./nginx/conf:/etc/nginx/conf.d
+    ports:
+      - "80:80"
