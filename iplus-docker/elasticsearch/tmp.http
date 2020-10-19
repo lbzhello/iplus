@@ -1,0 +1,22 @@
+### 创建一个文档 -- 在新建文档的时候如果指定的索引不存在则会自动创建相应的索引
+POST http://localhost:9200/customer/_doc?pretty
+Content-Type: application/json
+
+{
+  "name": "John Doe"
+}
+
+### 检索文档
+GET http://localhost:9200/customer/_doc/1?pretty
+
+###
+POST http://localhost:9200/api/item
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="field-name"; filename="file.txt"
+
+< ./relative/path/to/local_file.txt
+--WebAppBoundary--
+
+###

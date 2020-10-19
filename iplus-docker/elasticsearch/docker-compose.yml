@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  elasticsearch:
+    tty: true
+    image: elasticsearch:7.8.1
+    container_name: es
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - /d/data/elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      discovery.type: single-node
+
