@@ -4,6 +4,8 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.EmitterProcessor;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * HIK所有，<br/>
@@ -34,6 +37,29 @@ import java.util.function.Consumer;
  * @modify by reason :{原因}
  **/
 public class ReactorTest {
+
+    @Test
+    public void pubSubTest() {
+        Flux.create(it -> {
+            try {
+                it.next("hello1");
+                Thread.sleep(1000);
+                it.next("hello2");
+                Thread.sleep(2000);
+                it.next("hello3");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            it.complete();
+        })
+                .publishOn(Schedulers.newElastic("publishThread"))
+                .subscribeOn(Schedulers.newElastic("subscribeThread"))
+                .subscribe(it -> {
+                    TestHelper.printCurrentThread("subscribe");
+                    System.out.println("received");
+                    System.out.println(it);
+                });
+    }
 
     @Test
     public void windowTest() {
@@ -92,10 +118,43 @@ public class ReactorTest {
     }
 
 
-
+    /**
+     * Subscription#request 方法调用后才能发射事件，发射数小于请求数；
+     * Subscriber#onScribe 方法不受线程调度影响；
+     */
     @Test
-    public void backPresureTest() {
-        EmitterProcessor<Object> emitterProcessor = EmitterProcessor.create();
+    public void backPressureTest() {
+//        Flux.interval(Duration.ofSeconds(1))
+        Flux.create((Consumer<FluxSink<Integer>>) it -> {
+            TestHelper.printCurrentThread("create");
+            Stream.of(1, 2, 3, 4, 5, 6, 7).forEach(elem -> it.next(elem));
+            it.complete();
+        })
+                .subscribeOn(Schedulers.newElastic("subscribeOnThread"))
+                .publishOn(Schedulers.newElastic("publishOnThread"))
+                .subscribe(new Subscriber<Integer>() {
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        TestHelper.printCurrentThread("onSubscribe");
+                        System.out.println("onSubscribe");
+                        s.request(5);
+                    }
+
+                    @Override
+                    public void onNext(Integer aLong) {
+                        System.out.println(aLong);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        System.out.println("onError: " + t);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        System.out.println("onComplete");
+                    }
+                });
 
     }
 
