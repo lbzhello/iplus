@@ -1,5 +1,5 @@
 package xyz.liujin.iplus.elasticsearch.query;
 
-public class Match extends Leaf {
+public class Range extends Leaf {
 
 }

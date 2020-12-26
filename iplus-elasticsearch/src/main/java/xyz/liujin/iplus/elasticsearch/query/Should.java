@@ -1,20 +1,19 @@
 package xyz.liujin.iplus.elasticsearch.query;
 
 /**
- * 严格匹配，在 filter context 中执行，因此不会计算 score
- * @see Must
+ * 表示从句应该出现在文档中
  */
-public class Filter {
+public class Should {
     private Term term;
 
-    public Filter term(Term term) {
+    public Should term(Term term) {
         this.term = term;
         return this;
     }
 
     public Term newTerm() {
         this.term = new Term();
-        return this.term;
+        return term;
     }
 
     public Term getTerm() {
