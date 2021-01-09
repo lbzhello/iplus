@@ -39,6 +39,52 @@ import java.util.stream.Stream;
 public class ReactorTest {
 
     @Test
+    public void delayTest() throws InterruptedException {
+        Flux.range(1, 100)
+                .delayElements(Duration.ofSeconds(1))
+                .subscribe(it -> System.out.println(it));
+        Thread.sleep(20*1000);
+        System.out.println();
+    }
+
+    @Test
+    public void requestTest() {
+        Flux.range(1, 100)
+                .subscribe(new Subscriber<Integer>() {
+                    private Subscription subscription;
+                    private int count = 0;
+                    private int BATCH_SIZE = 10; // 消费者处理速度
+
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        subscription = s;
+                        s.request(BATCH_SIZE); // 必须调用此方法订阅者才开始处理数据
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        count++;
+                        System.out.println(integer);
+                        if (count >= BATCH_SIZE) {
+                            count = 0; // 从新计数
+                            System.out.println("request more " + BATCH_SIZE);
+                            subscription.request(BATCH_SIZE); // 处理完成，继续请求更多的数据
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        System.out.println("onError");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        System.out.println("onComplete");
+                    }
+                });
+    }
+
+    @Test
     public void pubSubTest() {
         Flux.create(it -> {
             try {
