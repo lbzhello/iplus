@@ -1,25 +1,25 @@
+// 构建脚本，最先运行，必须放在 plugins 前面
 buildscript {
     print("hello iplus")
+
+    ext {
+        springBootVersion = '2.3.2.RELEASE'
+    }
+
+    repositories {
+        maven {
+            url 'https://maven.aliyun.com/repository/public'
+        }
+        jcenter()
+    }
+
+    dependencies {
+        // sprinboot 插件，依赖管理，启动类自动配置等
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+    }
 }
-
-
-plugins {
-    id 'org.springframework.boot' version '2.3.2.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-    id 'java'
-}
-
-group = 'xyz.liujin'
-version = '0.0.1-SNAPSHOT'
-
-sourceCompatibility = '11'
 
 ext {
-    spring = [
-        boot   : [
-            version: "2.3.2.RELEASE"
-        ]
-    ]
 
     rxjava = [
         version: '3.0.5'
@@ -37,6 +37,32 @@ ext {
 // 所有项目共享配置
 allprojects {
     apply plugin: "java"
+    // springboot 依赖管理插件，可以不指定版本号
+    apply plugin: "io.spring.dependency-management"
+
+    // 字符编码
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    group = 'xyz.liujin'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = '11'
+
+    sourceSets {
+        main {
+            resources {
+                //可以将java目录下的所有非.java资源打包到classes下
+                srcDir "src/main/java"
+            }
+        }
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-starter-parent:${springBootVersion}"
+        }
+    }
 
     repositories {
         maven {
@@ -73,7 +99,7 @@ subprojects {
 //		compile project(":iplus-dependencies")
 
         // webflux -- reactor-core
-        compile group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: spring.boot.version
+        compile group: 'org.springframework.boot', name: 'spring-boot-starter-webflux'
 
         // RxJava3
         compile group: 'io.reactivex.rxjava3', name: 'rxjava', version: rxjava.version
@@ -82,6 +108,8 @@ subprojects {
         // testCompile 无法通过 allprojects 或 subprojects 集成
         testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit.version
     }
+
+
 }
 
 dependencies {

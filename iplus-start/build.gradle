@@ -1,7 +1,7 @@
-plugins {
-    id 'java'
-}
+apply plugin: 'java'
+// springboot 启动类配置插件，自动识别 mainClassName
+apply plugin: 'org.springframework.boot'
 
 dependencies {
-    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: spring.boot.version
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
 }
