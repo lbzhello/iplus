@@ -8,5 +8,10 @@ version '0.0.1-SNAPSHOT'
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.3.11'
 
+    // truffle 语言框架
+    implementation group: 'org.graalvm.truffle', name: 'truffle-api', version: '21.0.0.2'
+
+    implementation group: 'org.graalvm.truffle', name: 'truffle-dsl-processor', version: '21.0.0.2'
+
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.6.2'
 }
