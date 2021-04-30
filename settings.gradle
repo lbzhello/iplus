@@ -6,4 +6,7 @@ include 'iplus-kotlin'
 include 'iplus-start'
 include 'iplus-test'
 include 'iplus-elasticsearch'
+include 'iplus-java'
+include 'iplus-spring'
+include 'iplus-netty'
 
