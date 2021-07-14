@@ -2,10 +2,12 @@ package xyz.liujin.iplus.java.socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.Objects;
+import java.util.concurrent.CyclicBarrier;
 
 public class FooClientSocket {
     private static final Logger logger = LoggerFactory.getLogger(FooClientSocket.class);
@@ -25,12 +27,14 @@ public class FooClientSocket {
             // 打开输入流
             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
+            // 同步主线程和子线程
+            CyclicBarrier cyclicBarrier = new CyclicBarrier(2);
 
             // 接收线程，由于 readLine 方法会阻塞调，这里单独使用线程接收
             new Thread(() -> {
                 try {
                     String resp;
-                    while (true) {
+                    while (!stop) {
                         resp = reader.readLine();
                         logger.info(resp);
                     }
@@ -40,23 +44,34 @@ public class FooClientSocket {
             }).start();
 
             // 发送线程
-            try {
-                BufferedReader system = new BufferedReader(new InputStreamReader(System.in));
-                String msg;
-                do {
-                    msg = system.readLine();
-                    // 向服务器发送消息
-                    writer.println(msg);
-                    writer.flush();
-                } while (!Objects.equals(msg, FooServerSocket.END_STR));
-                // 关闭输入流
-                writer.close();
-                reader.close();
-            } catch (IOException e) {
-                logger.error("failed to send msg to server socket");
-            }
+            new Thread(() -> {
+                // 发送线程
+                try {
+                    BufferedReader system = new BufferedReader(new InputStreamReader(System.in));
+                    String msg;
+                    do {
+                        msg = system.readLine();
+                        // 向服务器发送消息
+                        writer.println(msg);
+                        writer.flush();
+                    } while (!Objects.equals(msg, FooServerSocket.END_STR));
+                    // 关闭输入流
+                    writer.close();
+                    reader.close();
 
-        } catch (IOException e) {
+                    // 通知接收线程关闭
+                    stop = true;
+
+                    cyclicBarrier.await();
+                } catch (Exception e) {
+                    logger.error("failed to send msg to server socket");
+                }
+            }).start();
+
+            // 等待发送线程执行完
+            cyclicBarrier.await();
+
+        } catch (Exception e) {
             logger.error("failed to start client socket", e);
         }
     }

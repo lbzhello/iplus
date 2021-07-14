@@ -52,6 +52,7 @@ public class FooServerSocket {
                                     writer.flush();
                                 } while (!Objects.equals(msg, END_STR));
 
+                                logger.info("client socket closed");
                             }
 
                             socket.close();
