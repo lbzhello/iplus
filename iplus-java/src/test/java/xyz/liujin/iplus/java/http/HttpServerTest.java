@@ -1,15 +1,13 @@
-package xyz.liujin.iplus.java;
+package xyz.liujin.iplus.java.http;
 
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import xyz.liujin.iplus.java.http.FooHttpServer;
+import xyz.liujin.iplus.java.JavaApp;
 
-@ComponentScan
-@Configuration
-public class JavaApp {
-    public static void main(String[] args) {
+public class HttpServerTest {
+    @Test
+    public void httpServerTest() {
         ApplicationContext applicationContext = new AnnotationConfigApplicationContext(JavaApp.class);
         FooHttpServer httpServer = applicationContext.getBean(FooHttpServer.class);
         httpServer.start(8080);
