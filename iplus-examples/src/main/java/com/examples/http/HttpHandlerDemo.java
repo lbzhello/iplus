@@ -23,8 +23,8 @@ import java.nio.charset.StandardCharsets;
  * @modify by user :{修改人} :{修改时间}
  * @modify by reason :{原因}
  **/
-public class FooHttpHandler implements HttpHandler {
-    private static final Logger logger = LoggerFactory.getLogger(FooHttpHandler.class);
+public class HttpHandlerDemo implements HttpHandler {
+    private static final Logger logger = LoggerFactory.getLogger(HttpHandlerDemo.class);
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {

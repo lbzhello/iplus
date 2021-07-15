@@ -9,7 +9,7 @@ public class HttpServerTest {
     @Test
     public void httpServerTest() {
         ApplicationContext applicationContext = new AnnotationConfigApplicationContext(JavaApp.class);
-        FooHttpServer httpServer = applicationContext.getBean(FooHttpServer.class);
+        HttpServerDemo httpServer = applicationContext.getBean(HttpServerDemo.class);
         httpServer.start(8080);
         System.out.println();
     }

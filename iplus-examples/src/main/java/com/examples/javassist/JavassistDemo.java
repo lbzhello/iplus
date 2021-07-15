@@ -6,7 +6,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
-public class JavassistEg {
+public class JavassistDemo {
 
     /**
      * 创建类

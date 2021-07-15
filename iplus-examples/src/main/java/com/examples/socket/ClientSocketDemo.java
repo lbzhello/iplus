@@ -6,11 +6,10 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.Socket;
 import java.util.Objects;
-import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
-public class FooClientSocket {
-    private static final Logger logger = LoggerFactory.getLogger(FooClientSocket.class);
+public class ClientSocketDemo {
+    private static final Logger logger = LoggerFactory.getLogger(ClientSocketDemo.class);
 
     private volatile boolean stop = false;
 
@@ -21,7 +20,7 @@ public class FooClientSocket {
              * socket 建立后可以重用，后续可以继续调用 readLine 获取消息
              * 调用 socket 的输入流读取消息时，方法会阻塞，直至从流中收到消息
              */
-            Socket socket = new Socket("127.0.0.1", FooServerSocket.SERVER_PORT);
+            Socket socket = new Socket("127.0.0.1", ServerSocketDemo.SERVER_PORT);
             // 打开输出流
             PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
             // 打开输入流
@@ -54,7 +53,7 @@ public class FooClientSocket {
                         // 向服务器发送消息
                         writer.println(msg);
                         writer.flush();
-                    } while (!Objects.equals(msg, FooServerSocket.END_STR));
+                    } while (!Objects.equals(msg, ServerSocketDemo.END_STR));
 
                     // 通知接收线程关闭
                     stop = true;

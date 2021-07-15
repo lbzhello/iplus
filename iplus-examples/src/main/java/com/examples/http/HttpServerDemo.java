@@ -14,8 +14,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class FooHttpServer {
-    private static Logger logger = LoggerFactory.getLogger(FooHttpServer.class);
+public class HttpServerDemo {
+    private static Logger logger = LoggerFactory.getLogger(HttpServerDemo.class);
 
     public final ExecutorService EXECUTOR_SERVICE = new ThreadPoolExecutor(10, 10,
             0L,
@@ -43,7 +43,7 @@ public class FooHttpServer {
             httpServer = HttpServer.create(new InetSocketAddress(port), 0);
 
             //创建一个HttpContext，将路径为/myserver请求映射到MyHttpHandler处理器
-            httpServer.createContext("/", new FooHttpHandler());
+            httpServer.createContext("/", new HttpHandlerDemo());
 
             //设置服务器的线程池对象
             httpServer.setExecutor(EXECUTOR_SERVICE);

@@ -10,8 +10,8 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class FooServerSocket {
-    private static final Logger logger = LoggerFactory.getLogger(FooServerSocket.class);
+public class ServerSocketDemo {
+    private static final Logger logger = LoggerFactory.getLogger(ServerSocketDemo.class);
 
     public static final int SERVER_PORT = 8888;
 

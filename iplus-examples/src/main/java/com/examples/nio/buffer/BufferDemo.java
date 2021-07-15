@@ -5,7 +5,7 @@ import java.nio.CharBuffer;
 /**
  *
  */
-public class BufferEg {
+public class BufferDemo {
 
     public static void main(String[] args) {
         CharBuffer charBuffer = CharBuffer.allocate(128);

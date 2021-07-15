@@ -7,7 +7,7 @@ import javax.tools.ToolProvider;
 import java.nio.file.Path;
 import java.util.Iterator;
 
-public class FooClassLoader {
+public class ClassLoaderDemo {
     public static void main(String[] args) {
         String javaName = "";
         String javaSrc = "";
