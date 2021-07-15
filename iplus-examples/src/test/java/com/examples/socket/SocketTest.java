@@ -1,4 +1,4 @@
-package xyz.liujin.iplus.java.socket;
+package com.examples.socket;
 
 import org.junit.jupiter.api.Test;
 

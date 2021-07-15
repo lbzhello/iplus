@@ -1,16 +1,14 @@
-package xyz.liujin.iplus.java.http;
+package com.examples.http;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StreamUtils;
 
 import java.io.*;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.stream.Stream;
 
 /**
  * HIK所有，<br/>

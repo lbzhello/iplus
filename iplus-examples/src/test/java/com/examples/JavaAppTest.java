@@ -1,4 +1,4 @@
-package xyz.liujin.iplus.java;
+package com.examples;
 
 public class JavaAppTest {
 
