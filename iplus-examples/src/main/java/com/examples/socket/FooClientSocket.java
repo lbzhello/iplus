@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.Socket;
 import java.util.Objects;
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 public class FooClientSocket {
@@ -54,16 +55,22 @@ public class FooClientSocket {
                         writer.println(msg);
                         writer.flush();
                     } while (!Objects.equals(msg, FooServerSocket.END_STR));
-                    // 关闭输入流
-                    writer.close();
-                    reader.close();
 
                     // 通知接收线程关闭
                     stop = true;
 
-                    cyclicBarrier.await();
                 } catch (Exception e) {
                     logger.error("failed to send msg to server socket");
+                } finally {
+                    // 关闭流
+                    try {
+                        writer.close();
+                        reader.close();
+                        socket.close();
+                        cyclicBarrier.await();
+                    } catch (Exception e) {
+                        // ignore
+                    }
                 }
             }).start();
 

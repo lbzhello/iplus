@@ -58,6 +58,12 @@ public class FooServerSocket {
                             socket.close();
                         } catch (IOException e) {
                             logger.debug("failed to deal socket msg", e);
+                        } finally {
+                            try {
+                                socket.close();
+                            } catch (IOException e) {
+                                // ignore
+                            }
                         }
                     });
                 } catch (IOException e) {
