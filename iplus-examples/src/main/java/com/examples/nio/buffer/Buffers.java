@@ -8,9 +8,13 @@ public class Buffers {
     ByteBuffer readBuffer;
     ByteBuffer writeBuffer;
 
-    public Buffers(int readCapacity, int writeCapacity){
+    Buffers(int readCapacity, int writeCapacity){
         readBuffer = ByteBuffer.allocate(readCapacity);
         writeBuffer = ByteBuffer.allocate(writeCapacity);
+    }
+
+    public static final Buffers allocate(int readCapacity, int writeCapacity) {
+        return new Buffers(readCapacity, writeCapacity);
     }
 
     public ByteBuffer getReadBuffer(){

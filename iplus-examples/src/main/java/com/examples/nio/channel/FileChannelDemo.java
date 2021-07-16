@@ -57,7 +57,7 @@ public class FileChannelDemo {
             ByteBuffer byteBuffer = ByteBuffer.allocate(64);
             byteBuffer.put("hello world file channel\n".getBytes());
 
-            // 转成读模式
+            // 转成读模式，limit 被设置成 position
             byteBuffer.flip();
             // 从 buffer 中读数据写入 channel
             fileChannel.write(byteBuffer);
