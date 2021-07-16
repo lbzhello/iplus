@@ -65,7 +65,7 @@ public class ServerSocketChannelDemo {
                             // sc 注册进 selector, 关心读事件
                             sc.register(selector, SelectionKey.OP_READ, Buffers.allocate(256, 256));
 
-                            logger.info("wait to read");
+                            logger.info("waiting to read");
                         }
 
                         // sc 关心读事件
@@ -97,7 +97,7 @@ public class ServerSocketChannelDemo {
                             // 增加关心写事件，（sc 前面已经注册进 selector）
                             key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
 
-                            logger.info("wait to write");
+                            logger.info("waiting to write");
                         }
 
                         // sc 关心写事件
@@ -115,6 +115,7 @@ public class ServerSocketChannelDemo {
                                 len = sc.write(wbb);
                                 // 说明底层 socket 写缓冲已满(wbb 有数据，但是写入为 0)
                                 if (len == 0) {
+                                    // 这里 break 跳出，等缓冲区不满的情况下，就会触发 write 事件
                                     break;
                                 }
                             }
@@ -125,12 +126,13 @@ public class ServerSocketChannelDemo {
                             if (len != 0) {
                                 logger.info("write success, cancel write event");
 
-                                // 取消通道写事件
+                                // 取消通道写事件，需要写时再注册
                                 key.interestOps(key.interestOps() & (~SelectionKey.OP_WRITE));
                             }
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    } catch (Exception e) {
+                        // 若客户端关闭，read 的时候会抛出异常
+                        logger.error("socket IOException", e);
                         key.cancel();
                         key.channel().close();
                     }

@@ -48,9 +48,8 @@ public class SocketChannelDemo {
         }
 
         try {
-            int n = 0;
-            while (n < 2) {
-                n++;
+            boolean stop = false;
+            while (!stop) {
                 if (Objects.isNull(selector)) {
                     return;
                 }
@@ -84,6 +83,11 @@ public class SocketChannelDemo {
                         rbb.clear();
 
                         logger.info("read msg from server socket: {}", cb.toString());
+
+                        // 只和服务器交互一次
+                        logger.info("stop client socket");
+                        stop = true;
+                        break;
                     }
 
                     if (key.isWritable()) {
@@ -95,12 +99,15 @@ public class SocketChannelDemo {
                         wbb.clear();
 
                         logger.info("write msg to server socket: {}", msg);
+
+                        // 若底层缓冲区有空闲空间，写操作一直是就绪的，这里写完后去掉，需要再写
+                        key.interestOps(key.interestOps() & (~SelectionKey.OP_WRITE));
                     }
 
                 }
             }
         } catch (Exception e) {
-            logger.error("client socket failed", e);
+            logger.error("client socket exception", e);
         } finally {
             if (Objects.nonNull(selector)) {
                 try {
