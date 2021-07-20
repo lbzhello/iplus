@@ -1,5 +1,6 @@
-package com.examples.nio.channel;
+package com.examples.nio;
 
+import com.examples.nio.FileChannelDemo;
 import org.junit.jupiter.api.Test;
 
 public class FileChannelTest {

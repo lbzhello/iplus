@@ -1,10 +1,9 @@
-package com.examples.nio.channel;
+package com.examples.nio;
 
 import com.examples.nio.buffer.Buffers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;

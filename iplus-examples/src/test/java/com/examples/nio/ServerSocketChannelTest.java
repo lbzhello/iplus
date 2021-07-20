@@ -1,4 +1,4 @@
-package com.examples.nio.channel;
+package com.examples.nio;
 
 import org.junit.jupiter.api.Test;
 

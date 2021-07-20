@@ -1,4 +1,4 @@
-package com.examples.nio.channel;
+package com.examples.nio;
 
 import com.examples.nio.buffer.Buffers;
 import org.slf4j.Logger;
@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
