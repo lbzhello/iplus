@@ -29,5 +29,8 @@ public class BufferDemo {
         bb.flip();
         System.out.println(StandardCharsets.UTF_8.decode(bb).toString());
 
+        bb.rewind(); // 重新读
+        System.out.println(StandardCharsets.UTF_8.decode(bb).toString());
+
     }
 }
