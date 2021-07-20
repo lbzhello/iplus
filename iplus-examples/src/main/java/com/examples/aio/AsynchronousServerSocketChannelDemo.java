@@ -22,7 +22,9 @@ public class AsynchronousServerSocketChannelDemo {
 
     public void startAsynchronousServerSocket() {
         try {
+            // 防止服务器退出
             CyclicBarrier cyclicBarrier = new CyclicBarrier(2);
+
             // 异步线程池，用于处理 IO 事件，派发 CompletionHandler
             AsynchronousChannelGroup asynchronousChannelGroup = AsynchronousChannelGroup.withThreadPool(Executors.newCachedThreadPool());
 
@@ -38,6 +40,7 @@ public class AsynchronousServerSocketChannelDemo {
                     serverSocketChannel.accept(attachment, this);
 
                     ByteBuffer rbb = ByteBuffer.allocate(1024);
+
                     /** 异步读取数据, 数据读取完成后回调 **/
                     // 系统会将数据读取到 buffer （第一个参数）
                     socketChannel.read(rbb, rbb, new CompletionHandler<Integer, ByteBuffer>() {
@@ -84,7 +87,7 @@ public class AsynchronousServerSocketChannelDemo {
                 }
             });
 
-            // 防止服务器推出
+            // 防止服务器退出
             cyclicBarrier.await();
 
             logger.info("server socket stopped");

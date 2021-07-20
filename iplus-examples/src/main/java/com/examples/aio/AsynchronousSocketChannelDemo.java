@@ -27,7 +27,8 @@ public class AsynchronousSocketChannelDemo {
             // 异步线程池，用于处理 IO 事件，派发 CompletionHandler
             AsynchronousChannelGroup asynchronousChannelGroup = AsynchronousChannelGroup.withThreadPool(Executors.newCachedThreadPool());
             // 打开异步通道
-            AsynchronousSocketChannel socketChannel = AsynchronousSocketChannel.open();
+            AsynchronousSocketChannel socketChannel = AsynchronousSocketChannel.open(asynchronousChannelGroup);
+
             /** 异步连接服务器，连接完成后回调 **/
             socketChannel.connect(new InetSocketAddress("127.0.0.1", AsynchronousServerSocketChannelDemo.PORT), null, new CompletionHandler<Void, Object>() {
                 @Override
