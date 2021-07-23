@@ -1,14 +1,26 @@
 package com.examples.netty;
 
+import com.examples.util.ConcurrentUtils;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 public class NettyServerDemo {
+    private static final Logger logger = LoggerFactory.getLogger(NettyServerDemo.class);
+
     public void startServer() {
+        // 防止服务器退出
+        CyclicBarrier cyclicBarrier = new CyclicBarrier(2);
+
         // 创建两个线程组
         // bossGroup的作用是监听客户端请求
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -26,15 +38,34 @@ public class NettyServerDemo {
 //                // 客户端 channel 配置，设置保持活动连接状态
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
                 // 配置处理逻辑，每条连接的数据读写
-                .childHandler(new ChannelInitializer<>() {
+                .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
-                    protected void initChannel(Channel ch) throws Exception {
+                    protected void initChannel(NioSocketChannel ch) throws Exception {
+                        ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
+                            // 当前channel从远端读取到数据时触发
+                            @Override
+                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                                // 接收到的消息
+                                ByteBuf rbb = (ByteBuf) msg;
+                                String rmsg = rbb.toString(StandardCharsets.UTF_8);
+                                logger.info("server received msg: {}", rmsg);
 
+                                // 发送消息
+                                String smsg = "I'm server, your msg " + rmsg;
+
+                                ByteBuf wbb = ctx.alloc().buffer();
+                                wbb.writeBytes(smsg.getBytes(StandardCharsets.UTF_8));
+
+                                ctx.channel().writeAndFlush(wbb);
+
+                                logger.info("server send msg: {}", smsg);
+                            }
+                        });
                     }
                 });
         // 绑定端口
         bootstrap.bind(8888);
 
-
+        ConcurrentUtils.barrierAwait(cyclicBarrier);
     }
 }

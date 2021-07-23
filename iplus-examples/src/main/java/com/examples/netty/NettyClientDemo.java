@@ -1,6 +1,10 @@
 package com.examples.netty;
 
+import com.examples.util.ConcurrentUtils;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -8,12 +12,16 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
 
 public class NettyClientDemo {
     private static final Logger logger = LoggerFactory.getLogger(NettyClientDemo.class);
 
     public void startClient() {
+        CyclicBarrier cyclicBarrier = new CyclicBarrier(3);
+
         // 线程组,处理每条连接的数据读写
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
         // 客户端启动类
@@ -27,6 +35,33 @@ public class NettyClientDemo {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
+                        // 客户端与服务器建立连接后调用
+                        ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
+                            // 当前channel激活的时候触发
+                            @Override
+                            public void channelActive(ChannelHandlerContext ctx) throws Exception {
+                                String msg = "I'm groot";
+
+                                ByteBuf wbb = ctx.alloc().buffer();
+                                wbb.writeBytes(msg.getBytes(StandardCharsets.UTF_8));
+
+                                // 发送消息
+                                ctx.channel().writeAndFlush(wbb);
+
+                                logger.info("client send msg {}", msg);
+
+                                ConcurrentUtils.barrierAwait(cyclicBarrier);
+                            }
+
+                            // 当前channel从远端读取到数据时触发
+                            @Override
+                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                                ByteBuf bb = (ByteBuf) msg;
+                                logger.info("client received msg {}", bb.toString(StandardCharsets.UTF_8));
+
+                                ConcurrentUtils.barrierAwait(cyclicBarrier);
+                            }
+                        });
 
                     }
                 });
@@ -41,6 +76,7 @@ public class NettyClientDemo {
             }
         });
 
+        ConcurrentUtils.barrierAwait(cyclicBarrier);
     }
 
     /**
