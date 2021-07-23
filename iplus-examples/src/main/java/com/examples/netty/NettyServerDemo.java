@@ -3,6 +3,7 @@ package com.examples.netty;
 import com.examples.util.ConcurrentUtils;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -48,19 +49,42 @@ public class NettyServerDemo {
                                 // 接收到的消息
                                 ByteBuf rbb = (ByteBuf) msg;
                                 String rmsg = rbb.toString(StandardCharsets.UTF_8);
-                                logger.info("server received msg: {}", rmsg);
+                                logger.info("[inbound channelRead] server received msg: {}", rmsg);
 
                                 // 发送消息
-                                String smsg = "I'm server, your msg " + rmsg;
-
+                                String smsg = "I'm server";
                                 ByteBuf wbb = ctx.alloc().buffer();
                                 wbb.writeBytes(smsg.getBytes(StandardCharsets.UTF_8));
 
                                 ctx.channel().writeAndFlush(wbb);
 
-                                logger.info("server send msg: {}", smsg);
+                                logger.info("[inbound channelRead] server send msg: {}", smsg);
+                            }
+
+                            @Override
+                            public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+                                logger.error("exception", cause);
                             }
                         });
+
+//                        ch.pipeline().addLast(new ChannelOutboundHandlerAdapter() {
+//                            @Override
+//                            public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+//                                ByteBuf rbb = (ByteBuf) msg;
+//                                String rmsg = rbb.toString(StandardCharsets.UTF_8);
+//                                logger.info("outbound server received msg: {}", rmsg);
+//
+//                                // 发送消息
+//                                String smsg = "I'm server, your msg " + rmsg;
+//
+//                                ByteBuf wbb = ctx.alloc().buffer();
+//                                wbb.writeBytes(smsg.getBytes(StandardCharsets.UTF_8));
+//
+//                                ctx.channel().writeAndFlush(wbb);
+//
+//                                logger.info("outbound server send msg: {}", smsg);
+//                            }
+//                        });
                     }
                 });
         // 绑定端口
