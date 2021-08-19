@@ -10,6 +10,9 @@ repositories {
 }
 
 dependencies {
+    // postgresql 驱动
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.23'
+
     // https://mvnrepository.com/artifact/io.netty/netty-all
     implementation group: 'io.netty', name: 'netty-all', version: '4.1.66.Final'
 
