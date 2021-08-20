@@ -7,7 +7,7 @@ import java.util.List;
  * more-matches-is-better; must 和 should 从句的 score 相加得到最终的 _score
  */
 public class Bool {
-    private Must must;
+    private List<Must> must;
     private Filter filter;
     private List<Should> should;
     private MustNot mustNot;

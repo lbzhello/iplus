@@ -1,16 +1,27 @@
 package xyz.liujin.iplus.elasticsearch.query;
 
+import java.util.Map;
+
 /**
  * 严格匹配，影响 score
  */
 public class Must {
     private Term term = Term.EMPTY;
 
+    private Bool bool;
+
+    private Map<String, Object> match_phrase;
+
     // 所有文档得 1.0 score
     private MatchAll matchAll = MatchAll.EMPTY;
 
     public Must term(Term term) {
         this.term = term;
+        return this;
+    }
+
+    public Must bool(Bool bool) {
+        this.bool = bool;
         return this;
     }
 
