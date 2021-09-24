@@ -9,4 +9,5 @@ include 'iplus-elasticsearch'
 include 'iplus-examples'
 include 'iplus-spring'
 include 'iplus-netty'
+include 'iplus-consul'
 
