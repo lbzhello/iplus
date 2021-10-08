@@ -1,4 +1,4 @@
-package xyz.liujin.iplusx.test.reactor;
+package xyz.liujin.iplus.test.reactor;
 
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
@@ -14,7 +14,7 @@ import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.netty.http.client.HttpClient;
-import xyz.liujin.iplusx.test.TestHelper;
+import xyz.liujin.iplus.test.TestHelper;
 
 import java.io.FileWriter;
 import java.io.IOException;

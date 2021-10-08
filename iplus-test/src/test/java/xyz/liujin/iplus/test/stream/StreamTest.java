@@ -1,7 +1,7 @@
-package xyz.liujin.iplusx.test.stream;
+package xyz.liujin.iplus.test.stream;
 
 import org.junit.jupiter.api.Test;
-import xyz.liujin.iplusx.test.TestHelper;
+import xyz.liujin.iplus.test.TestHelper;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

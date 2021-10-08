@@ -1,11 +1,11 @@
-package xyz.liujin.iplusx.test.rxjava;
+package xyz.liujin.iplus.test.rxjava;
 
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-import xyz.liujin.iplusx.test.TestHelper;
+import xyz.liujin.iplus.test.TestHelper;
 
 public class RxJavaTest {
     @Test

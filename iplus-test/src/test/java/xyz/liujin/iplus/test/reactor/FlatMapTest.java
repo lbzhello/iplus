@@ -1,4 +1,4 @@
-package xyz.liujin.iplusx.test.reactor;
+package xyz.liujin.iplus.test.reactor;
 
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;

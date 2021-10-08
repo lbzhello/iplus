@@ -1,4 +1,4 @@
-package xyz.liujin.iplusx.test;
+package xyz.liujin.iplus.test;
 
 /**
  * HIK所有，<br/>
