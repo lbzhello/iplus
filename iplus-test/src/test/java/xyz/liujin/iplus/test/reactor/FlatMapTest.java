@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Stream;
@@ -23,10 +24,13 @@ import java.util.stream.Stream;
  **/
 public class FlatMapTest {
 
+    /**
+     * Flux 中的元素不能是 null
+     */
     @Test
-    public void test() {
-        Flux.just(1)
-                .take(2)
+    public void nullTest() {
+        Flux.just("hello", null, "world")
+                .filter(Objects::nonNull)
                 .subscribe(it -> {
                     System.out.println(it);
                 });
