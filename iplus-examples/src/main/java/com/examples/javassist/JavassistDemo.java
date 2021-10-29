@@ -140,8 +140,8 @@ public class JavassistDemo {
 
             Class<?> childClass = ctClassChild.toClass();
 //
-            Child o = (Child) childClass.getConstructor().newInstance();
-            System.out.println(o.hello());
+//            Child o = (Child) childClass.getConstructor().newInstance();
+//            System.out.println(o.hello());
         } catch (Throwable e) {
             e.printStackTrace();
         }

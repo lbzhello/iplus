@@ -47,13 +47,16 @@ public class ReactorTest {
         System.out.println();
     }
 
+    /**
+     * 消费者速度控制
+     */
     @Test
     public void requestTest() {
         Flux.range(1, 100)
                 .subscribe(new Subscriber<Integer>() {
                     private Subscription subscription;
                     private int count = 0;
-                    private int BATCH_SIZE = 10; // 消费者处理速度
+                    private final int BATCH_SIZE = 10; // 消费者处理速度
 
                     @Override
                     public void onSubscribe(Subscription s) {
