@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    compile group: 'com.google.code.findbugs', name: 'jsr305', version: jsr305.version
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: jsr305.version
 }
