@@ -1,6 +1,8 @@
 package xyz.liujin.iplus.test.reactor;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
@@ -23,6 +25,18 @@ import java.util.stream.Stream;
  * @modify by reason :{原因}
  **/
 public class FlatMapTest {
+    private static final Logger logger = LoggerFactory.getLogger(FlatMapTest.class);
+
+    @Test
+    public void errorTest() {
+        Flux.just(1, 2)
+                .subscribe(it -> {
+                    logger.debug("consumer running...");
+                    throw new RuntimeException("consumer error");
+                }, e -> {
+                    logger.debug("[{}] errorConsumer running...", e.getMessage());
+                });
+    }
 
     /**
      * Flux 中的元素不能是 null
