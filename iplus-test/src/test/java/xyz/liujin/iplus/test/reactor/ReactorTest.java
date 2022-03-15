@@ -14,7 +14,7 @@ import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.netty.http.client.HttpClient;
-import xyz.liujin.iplus.test.TestHelper;
+import xyz.liujin.iplus.util.LogUtil;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -104,7 +104,7 @@ public class ReactorTest {
                 .publishOn(Schedulers.newElastic("publishThread"))
                 .subscribeOn(Schedulers.newElastic("subscribeThread"))
                 .subscribe(it -> {
-                    TestHelper.printCurrentThread("subscribe");
+                    LogUtil.debug("subscribe");
                     System.out.println("received");
                     System.out.println(it);
                 });
@@ -146,15 +146,15 @@ public class ReactorTest {
     public void processorTest() {
         EmitterProcessor<Object> emitterProcessor = EmitterProcessor.create();
         emitterProcessor.publishOn(Schedulers.newElastic("newThread")).map(it -> {
-            TestHelper.printCurrentThread("map");
+            LogUtil.debug("map");
             return it;
         }).onErrorContinue((e, it) -> {
             System.out.println(it);
         }).subscribe(it -> {
-            TestHelper.printCurrentThread("subscribe");
+            LogUtil.debug("subscribe");
             System.out.println(it);
         }, e -> {
-            TestHelper.printCurrentThread("onError");
+            LogUtil.debug("onError");
             System.out.println(e.getMessage());
         });
 
@@ -175,7 +175,7 @@ public class ReactorTest {
     public void backPressureTest() {
 //        Flux.interval(Duration.ofSeconds(1))
         Flux.create((Consumer<FluxSink<Integer>>) it -> {
-            TestHelper.printCurrentThread("create");
+            LogUtil.debug("create");
             Stream.of(1, 2, 3, 4, 5, 6, 7).forEach(elem -> it.next(elem));
             it.complete();
         })
@@ -184,7 +184,7 @@ public class ReactorTest {
                 .subscribe(new Subscriber<Integer>() {
                     @Override
                     public void onSubscribe(Subscription s) {
-                        TestHelper.printCurrentThread("onSubscribe");
+                        LogUtil.debug("onSubscribe");
                         System.out.println("onSubscribe");
                         s.request(5);
                     }
@@ -222,7 +222,7 @@ public class ReactorTest {
                     .subscribeOn(Schedulers.newElastic("flux1"))
                     .map(it -> {
                         try {
-                            TestHelper.printCurrentThread("flux1");
+                            LogUtil.debug("flux1");
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -233,20 +233,20 @@ public class ReactorTest {
             Flux<Long> flux2 = Flux.interval(Duration.ofSeconds(1))
                     .subscribeOn(Schedulers.newElastic("flux2"))
                     .map(it -> {
-                        TestHelper.printCurrentThread("flux2");
+                        LogUtil.debug("flux2");
                         return it;
                     });
 
             Flux.zip(flux1, flux2)
                     .publishOn(Schedulers.newElastic("newThread"))
                     .subscribe(it -> {
-                        TestHelper.printCurrentThread("zip");
+                        LogUtil.debug("zip");
                         System.out.println(it);
                     });
 
             for (; ; ) {
                 Thread.sleep(1000);
-                TestHelper.printCurrentThread("current");
+                LogUtil.debug("current");
             }
         }
 
@@ -256,19 +256,19 @@ public class ReactorTest {
     public void threadTest() {
         Flux
                 .create(it -> {
-                    TestHelper.printCurrentThread("from");
+                    LogUtil.debug("from");
                     it.next(1);
                     it.complete();
                 })
-                .doOnSubscribe(it -> TestHelper.printCurrentThread("doOnSubscribe1"))
+                .doOnSubscribe(it -> LogUtil.debug("doOnSubscribe1"))
                 .subscribeOn(Schedulers.newElastic("subscribeOn1"))
-                .doOnSubscribe(it -> TestHelper.printCurrentThread("doOnSubscribe2"))
+                .doOnSubscribe(it -> LogUtil.debug("doOnSubscribe2"))
                 .subscribeOn(Schedulers.newElastic("subscribeOn2"))
-                .doOnNext(it -> TestHelper.printCurrentThread("doOnNext1"))
+                .doOnNext(it -> LogUtil.debug("doOnNext1"))
                 .publishOn(Schedulers.newElastic("publishOn1"))
-                .doOnSubscribe(it -> TestHelper.printCurrentThread("doOnSubscribe3"))
-                .doOnNext(it -> TestHelper.printCurrentThread("doOnNext2"))
-                .subscribe(it -> TestHelper.printCurrentThread("subscribe"));
+                .doOnSubscribe(it -> LogUtil.debug("doOnSubscribe3"))
+                .doOnNext(it -> LogUtil.debug("doOnNext2"))
+                .subscribe(it -> LogUtil.debug("subscribe"));
     }
 
     @Test
@@ -409,22 +409,22 @@ public class ReactorTest {
     @Test
     public void publishTest() {
         Flux.create((Consumer<FluxSink<Integer>>) it -> {
-            TestHelper.printCurrentThread("create");
+            LogUtil.debug("create");
             Arrays.asList(1, 2, 3).forEach(elem -> it.next(elem));
             // 需要加上这句，否则无法处理完成
             it.complete();
         })
                 .subscribeOn(Schedulers.newElastic("subscribeOn"))
                 .publishOn(Schedulers.newElastic("publishOnThread")).map(it -> {
-            TestHelper.printCurrentThread("map");
+            LogUtil.debug("map");
             return it;
         }).onErrorContinue((e, it) -> {
             System.out.println(it);
         }).subscribe(it -> {
-            TestHelper.printCurrentThread("subscribe");
+            LogUtil.debug("subscribe");
             System.out.println(it);
         }, e -> {
-            TestHelper.printCurrentThread("onError");
+            LogUtil.debug("onError");
             System.out.println(e.getMessage());
         });
     }
@@ -432,7 +432,7 @@ public class ReactorTest {
     @Test
     public void publishSubscribeTest() {
         Flux.create(it -> {
-            TestHelper.printCurrentThread("from");
+            LogUtil.debug("from");
             Arrays.asList(1, 2, 3).forEach(elem -> {
                 System.out.println(elem);
                 it.next(elem);
@@ -440,20 +440,20 @@ public class ReactorTest {
             // 需要加上这句，否则无法处理完成
             it.complete();
         }).publishOn(Schedulers.newElastic("publishThread")).map(it -> {
-            TestHelper.printCurrentThread("map1");
+            LogUtil.debug("map1");
             return it;
         // subscribeOn 设定默认线程，与所处位置无关
         // 因此下面的 Map2 依然运行在 publishOn 线程
         }).subscribeOn(Schedulers.newElastic("subscribeThread")).map(it -> {
-            TestHelper.printCurrentThread("map2");
+            LogUtil.debug("map2");
             return it;
         }).onErrorContinue((e, it) -> {
             System.out.println(it);
         }).subscribe(it -> {
-            TestHelper.printCurrentThread("subscribe");
+            LogUtil.debug("subscribe");
             System.out.println(it);
         }, e -> {
-            TestHelper.printCurrentThread("onError");
+            LogUtil.debug("onError");
             System.out.println(e.getMessage());
         });
     }

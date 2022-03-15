@@ -1,4 +1,7 @@
-package xyz.liujin.iplus.test;
+package xyz.liujin.iplus.util;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HIK所有，<br/>
@@ -13,8 +16,11 @@ package xyz.liujin.iplus.test;
  * @modify by user :{修改人} :{修改时间}
  * @modify by reason :{原因}
  **/
-public class TestHelper {
-    public static void printCurrentThread(String method) {
-        System.out.println("【" + method + "】 method running in thread: <<" + Thread.currentThread().getName() + ">>");
+public class LogUtil {
+    public static void debug(String msg) {
+        // 调用此方法的位置
+        String position = Thread.currentThread().getStackTrace()[2].toString();
+        Logger logger = LoggerFactory.getLogger(position);
+        logger.debug("{}", msg);
     }
 }

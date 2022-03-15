@@ -13,4 +13,5 @@ dependencies {
 
     implementation group: 'org.graalvm.truffle', name: 'truffle-dsl-processor', version: '21.0.0.2'
 
+    implementation project(":iplus-util")
 }

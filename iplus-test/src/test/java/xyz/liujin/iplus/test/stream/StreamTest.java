@@ -3,7 +3,7 @@ package xyz.liujin.iplus.test.stream;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xyz.liujin.iplus.test.TestHelper;
+import xyz.liujin.iplus.util.LogUtil;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -30,7 +30,7 @@ public class StreamTest {
         CompletableFuture.supplyAsync(() -> {
             return "hello world";
         }, Executors.newSingleThreadExecutor()).thenApply(it -> {
-            TestHelper.printCurrentThread("thenApply");
+            LogUtil.debug("thenApply");
             return it + 1;
         });
     }

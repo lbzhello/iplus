@@ -5,38 +5,38 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-import xyz.liujin.iplus.test.TestHelper;
+import xyz.liujin.iplus.util.LogUtil;
 
 public class RxJavaTest {
     @Test
     public void flowableTest() {
         Flowable.fromPublisher(it -> {
-            TestHelper.printCurrentThread("fromPublisher");
+            LogUtil.debug("fromPublisher");
             it.onNext(1);
             it.onComplete();
         })
                 .map(it -> {
-                    TestHelper.printCurrentThread("map");
+                    LogUtil.debug("map");
                     return it;
                 })
                 .doOnSubscribe(it -> {
-                    TestHelper.printCurrentThread("doOnSubscribe");
+                    LogUtil.debug("doOnSubscribe");
                 })
                 .doOnRequest(it -> {
-                    TestHelper.printCurrentThread("doOnRequest");
+                    LogUtil.debug("doOnRequest");
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation())
                 .subscribe(new Subscriber<Object>() {
                     @Override
                     public void onSubscribe(Subscription s) {
-                        TestHelper.printCurrentThread("onSubscribe");
+                        LogUtil.debug("onSubscribe");
                         s.request(1000);
                     }
 
                     @Override
                     public void onNext(Object o) {
-                        TestHelper.printCurrentThread("onNext");
+                        LogUtil.debug("onNext");
                     }
 
                     @Override
