@@ -10,6 +10,8 @@ repositories {
 }
 
 dependencies {
+    implementation project(":iplus-util")
+
     // postgresql 驱动
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.23'
 
