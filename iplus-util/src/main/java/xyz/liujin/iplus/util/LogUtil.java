@@ -57,7 +57,7 @@ public class LogUtil {
 
         // 只有一个参数形式： [param0] msg
         if (params.length == 1) {
-            return Mono.just(Tuples.of("[" + params[0] + "]", EMPTY));
+            return Mono.just(Tuples.of("[" + params[0] + "] " + msg, EMPTY));
         }
 
         // param 长度必须是偶数
