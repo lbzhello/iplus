@@ -25,68 +25,100 @@ import java.util.function.Consumer;
  * @modify by user :{修改人} :{修改时间}
  * @modify by reason :{原因}
  **/
-public class FluxTest {
-
+public class PublishOnSubscribeOnTest {
     /**
-     * from 不支持背压
-     * from 不支持 publishOn 切换线程池
+     * publishOn subscribeOn 结合使用
      */
     @Test
-    public void fromTest() {
-        Flux.from(new Publisher<Integer>() {
-            @Override
-            public void subscribe(Subscriber<? super Integer> s) {
-                s.onNext(0);
-                s.onNext(1);
-                s.onNext(2);
-                s.onNext(3);
-                s.onComplete();
-            }
-        })
+    public void pubSubOnTest() {
+        Flux.just(1, 2)
+                .filter(it -> {
+                    LogUtil.debug(it, "filter");
+                    return it % 2 == 0;
+                })
+                .publishOn(Schedulers.newElastic("publishOn-pool-a"))
                 .map(it -> {
-                    LogUtil.debug(it, "map");
+                    LogUtil.debug(it, "map-a"); // 运行在 publishOn-pool-a
                     return it * 2;
                 })
-//                .publishOn(Schedulers.newElastic("filter-pool"))
-                .filter(it -> {
-                    LogUtil.debug(it, "filter");
-                    return it % 2 == 0;
+                .publishOn(Schedulers.newElastic("publishOn-pool-b"))
+                .map(it -> {
+                    LogUtil.debug(it, "map-b"); // 运行在 publishOn-pool-b
+                    return it * 2;
                 })
-                .subscribeOn(Schedulers.newElastic("from-pool"))
-                .subscribe(it -> LogUtil.debug(it, "subscribe"));
+                .subscribeOn(Schedulers.newElastic("subscribeOn-pool"))
+                .subscribe(it -> {
+                    LogUtil.debug(it, "subscribe"); // 运行在 publishOn-pool-b
+                });
 
-        DebugUtil.waitMillis(200);
+        DebugUtil.waitMillis(100);
     }
 
+    /**
+     * publishOn 多次调用
+     */
     @Test
-    public void subscribeOnTest() {
-        Flux.range(1, 2)
+    public void publishOnTest() {
+        Flux.just(1, 2)
+                .publishOn(Schedulers.newElastic("publishOn-pool-a"))
                 .filter(it -> {
-                    LogUtil.debug(it, "filter");
+                    LogUtil.debug(it, "filter"); // 运行在 publishOn-pool-a
                     return it % 2 == 0;
                 })
-                .subscribeOn(Schedulers.newElastic("subscribe-pool-c"))
-                .doOnSubscribe(s -> LogUtil.debug("doOnSubscribe-b"))
+                .publishOn(Schedulers.newElastic("publishOn-pool-b"))
+                .map(it -> {
+                    LogUtil.debug(it, "map"); // 运行在 publishOn-pool-b
+                    return it * 2;
+                })
+                .subscribe(it -> {
+                    LogUtil.debug(it, "subscribe"); // 运行在 publishOn-pool-b
+                });
+
+        DebugUtil.waitMillis(100);
+    }
+
+    /**
+     * subscribeOn 多次调用
+     */
+    @Test
+    public void subscribeOnTest2() {
+        Flux.just(1, 2)
+                .doOnSubscribe(s -> LogUtil.debug("doOnSubscribe-b")) // 运行在subscribe-pool-b
                 .subscribeOn(Schedulers.newElastic("subscribe-pool-b"))
-                .doOnSubscribe(s -> LogUtil.debug("doOnSubscribe-a"))
+                .doOnSubscribe(s -> LogUtil.debug("doOnSubscribe-a"))  // 运行在 subscribe-pool-a
                 .subscribeOn(Schedulers.newElastic("subscribe-pool-a"))
-                .subscribe(i -> LogUtil.debug(i));
+                .subscribe(i -> LogUtil.debug(i, "subscribe")); // 运行在 subscribe-pool-b
+
         DebugUtil.waitMillis(100);
     }
 
     @Test
-    public void createPublishTest() {
-        Flux.just(1, 2, 3)
-                .subscribe(System.out::println);
+    public void subscribeOnTest() {
+        Flux.range(1, 3)
+                .filter(i -> {
+                    LogUtil.debug(i, "filter"); // 运行在 subscribeOn-pool
+                    return i % 2 == 0;
+                })
+                .map(it -> {
+                    LogUtil.debug(it, "map"); // 运行在 subscribeOn-pool
+                    return it * 2;
+                })
+                .subscribeOn(Schedulers.newElastic("subscribeOn-pool"))
+                .subscribe(it -> {
+                    LogUtil.debug(it, "subscribe"); // 运行在 subscribeOn-pool
+                });
+
+        DebugUtil.waitMillis(100);
     }
 
     /**
      * onSubscribe 方法会再当前线程调用
      */
     @Test
-    public void createDoOnXXTest() {
+    public void subscribeOnDoOnXXTest() {
         Flux.create(new Consumer<FluxSink<Integer>>() {
             {
+                // 当前线程
                 LogUtil.debug("create");
             }
 
@@ -94,6 +126,7 @@ public class FluxTest {
             public void accept(FluxSink<Integer> fluxSink) {
                 LogUtil.debug("start send data");
                 fluxSink.next(1);
+                LogUtil.debug("send one data");
                 fluxSink.complete();
             }
         })
