@@ -1,4 +1,4 @@
-package xyz.liujin.iplus.test.stream;
+package com.test.stream;
 
 import org.junit.jupiter.api.Test;
 import xyz.liujin.iplus.util.LogUtil;

@@ -1,4 +1,4 @@
-package xyz.liujin.iplus.test.alibaba;
+package com.test.alibaba;
 
 /**
  * 总共 n 瓶啤酒，3瓶啤酒可以换一瓶啤酒，7个瓶盖可以换一瓶啤酒，问总共可以喝几瓶啤酒？

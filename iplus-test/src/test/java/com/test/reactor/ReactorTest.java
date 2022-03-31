@@ -1,4 +1,4 @@
-package xyz.liujin.iplus.test.reactor;
+package com.test.reactor;
 
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;

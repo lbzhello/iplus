@@ -1,4 +1,4 @@
-package xyz.liujin.iplus.test.reactor;
+package com.test.reactor;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

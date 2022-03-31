@@ -1,4 +1,4 @@
-package xyz.liujin.iplus.test.rxjava;
+package com.test.rxjava;
 
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;

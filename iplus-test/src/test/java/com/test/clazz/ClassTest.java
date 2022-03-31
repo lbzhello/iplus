@@ -1,4 +1,4 @@
-package xyz.liujin.iplus.test.clazz;
+package com.test.clazz;
 
 import org.junit.jupiter.api.Test;
 
