@@ -13,7 +13,7 @@ public class DebugUtil {
      * 线程等待一段时间再退出
      * @param millis
      */
-    public static final void waitMillis(long millis) {
+    public static final void sleep(long millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {

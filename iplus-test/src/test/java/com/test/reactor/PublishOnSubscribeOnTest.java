@@ -1,7 +1,6 @@
 package com.test.reactor;
 
 import org.junit.jupiter.api.Test;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
@@ -51,7 +50,7 @@ public class PublishOnSubscribeOnTest {
                     LogUtil.debug(it, "subscribe"); // 运行在 publishOn-pool-b
                 });
 
-        DebugUtil.waitMillis(100);
+        DebugUtil.sleep(100);
     }
 
     /**
@@ -74,7 +73,7 @@ public class PublishOnSubscribeOnTest {
                     LogUtil.debug(it, "subscribe"); // 运行在 publishOn-pool-b
                 });
 
-        DebugUtil.waitMillis(100);
+        DebugUtil.sleep(100);
     }
 
     /**
@@ -89,7 +88,7 @@ public class PublishOnSubscribeOnTest {
                 .subscribeOn(Schedulers.newElastic("subscribe-pool-a"))
                 .subscribe(i -> LogUtil.debug(i, "subscribe")); // 运行在 subscribe-pool-b
 
-        DebugUtil.waitMillis(100);
+        DebugUtil.sleep(100);
     }
 
     @Test
@@ -104,11 +103,12 @@ public class PublishOnSubscribeOnTest {
                     return it * 2;
                 })
                 .subscribeOn(Schedulers.newElastic("subscribeOn-pool"))
+//                .subscribeOn(Schedulers.fromExecutor(Executors.newCachedThreadPool()))
                 .subscribe(it -> {
                     LogUtil.debug(it, "subscribe"); // 运行在 subscribeOn-pool
                 });
 
-        DebugUtil.waitMillis(100);
+        DebugUtil.sleep(100);
     }
 
     /**
@@ -166,7 +166,7 @@ public class PublishOnSubscribeOnTest {
                         LogUtil.debug("onComplete");
                     }
                 });
-        DebugUtil.waitMillis(100);
+        DebugUtil.sleep(100);
     }
 
     @Test
@@ -198,7 +198,7 @@ public class PublishOnSubscribeOnTest {
 
                     }
                 });
-        DebugUtil.waitMillis(200);
+        DebugUtil.sleep(200);
     }
 
     public void demoTest() {
