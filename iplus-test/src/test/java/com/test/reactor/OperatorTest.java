@@ -10,6 +10,25 @@ import xyz.liujin.iplus.util.debug.DebugUtil;
 import java.util.function.Consumer;
 
 public class OperatorTest {
+    @Test
+    public void windowTest() {
+        Flux.range(1, 10)
+                .window(3)
+                .subscribe(intFlux -> {
+                    intFlux.collectList().subscribe(intList -> {
+                        LogUtil.debug(intList);
+                    });
+                });
+    }
+
+    @Test
+    public void reduceTest() {
+        Flux.just(1, 2, 3)
+                .reduce(Math::addExact)
+                .subscribe(it -> {
+                    LogUtil.debug(it);
+                });
+    }
 
     /**
      * 转成热数据流，cache 前的操作会被计算一次并缓存；
@@ -57,6 +76,7 @@ public class OperatorTest {
 
     /**
      * 压缩，一对一合并
+     * 其中一个流触发 onComplete 事件则结束，多余的事件不在发出
      */
     @Test
     public void zipTest() {
@@ -97,6 +117,13 @@ public class OperatorTest {
         Flux.range(1, 5)
                 .flatMap(it -> Flux.just(it, it))
                 .subscribe(it -> LogUtil.debug(it));
+    }
+
+    @Test
+    public void doOnNextTest() {
+        Flux.range(1, 2)
+                .doOnNext(it -> LogUtil.debug(it, "doOnNext"))
+                .subscribe(it -> LogUtil.debug(it, "subscribe"));
     }
 
     @Test
