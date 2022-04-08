@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
+import xyz.liujin.iplus.util.LogUtil;
+import xyz.liujin.iplus.util.debug.DebugUtil;
 
 import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -24,18 +26,41 @@ import java.util.stream.Stream;
  * @modify by user :{修改人} :{修改时间}
  * @modify by reason :{原因}
  **/
-public class FlatMapTest {
-    private static final Logger logger = LoggerFactory.getLogger(FlatMapTest.class);
+public class FlatTest {
+    private static final Logger logger = LoggerFactory.getLogger(FlatTest.class);
 
+    /**
+     * consumer 出现异常
+     */
     @Test
     public void errorTest() {
-        Flux.just(1, 2)
+        Flux.range(1, 5)
+
+                // 出现异常时调用，只能铺货前面的异常
+                .doOnError(t -> {
+                    LogUtil.debug(t, "doOnError");
+                })
+                .map(it -> {
+                    LogUtil.debug(it, "map");
+                    throw new RuntimeException("map error");
+                })
+                //
+                .doFinally(it -> {
+                    LogUtil.debug(it, "doFinally1");
+                })
+                .doFinally(it -> {
+                    LogUtil.debug(it, "doFinally2");
+                })
                 .subscribe(it -> {
-                    logger.debug("consumer running...");
+                    LogUtil.debug(it, "consumer");
                     throw new RuntimeException("consumer error");
                 }, e -> {
-                    logger.debug("[{}] errorConsumer running...", e.getMessage());
+                    LogUtil.debug(e, "onError");
+                }, () -> {
+                    LogUtil.debug("complete");
                 });
+
+        DebugUtil.sleep(100);
     }
 
     /**

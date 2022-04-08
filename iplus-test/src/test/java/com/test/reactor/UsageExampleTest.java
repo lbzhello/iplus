@@ -21,24 +21,33 @@ public class UsageExampleTest {
      * A, D -> B, C, E -> F
      */
     @Test
-    public void abcdef() {
+    public void abcde2() {
         Flux.zip(task("A"), task("D"))
                 .flatMap(ad -> Flux.zip(task("B"), task("C"), task("E")))
-                .flatMap(ecd -> task("F"))
+                .flatMap(bce -> task("F"))
                 .subscribe();
+        DebugUtil.sleep(1000);
+    }
 
-//        // D -> B
-//        Mono<String> db = task("D").flatMap(d -> task("B"));
-//
-//        // C, E -> F
-//        Flux<String> cef = Flux.zip(task("C"), task("E"))
-//                .flatMap(ce -> task("F"));
-//
-//        // A -> B, C
-//        task("A")
-//                .flux()
-//                .flatMap(a -> Flux.zip(db, cef))
-//                .subscribe();
+    /**
+     * A -> B, C
+     * D -> B
+     * C, E -> F
+     */
+    @Test
+    public void abcdef() {
+        // D -> B
+        Mono<String> db = task("D").flatMap(d -> task("B"));
+
+        // C, E -> F
+        Flux<String> cef = Flux.zip(task("C"), task("E"))
+                .flatMap(ce -> task("F"));
+
+        // A -> B, C
+        task("A")
+                .flux()
+                .flatMap(a -> Flux.zip(db, cef))
+                .subscribe();
         DebugUtil.sleep(1000);
     }
 
