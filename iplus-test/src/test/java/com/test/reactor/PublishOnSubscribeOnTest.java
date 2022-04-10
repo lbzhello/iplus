@@ -59,6 +59,10 @@ public class PublishOnSubscribeOnTest {
     @Test
     public void publishOnTest() {
         Flux.just(1, 2)
+                .map(it -> {
+                    LogUtil.debug(it, "map1"); // 运行在当前线程
+                    return it + 1;
+                })
                 .publishOn(Schedulers.newElastic("publishOn-pool-a"))
                 .filter(it -> {
                     LogUtil.debug(it, "filter"); // 运行在 publishOn-pool-a
@@ -66,7 +70,7 @@ public class PublishOnSubscribeOnTest {
                 })
                 .publishOn(Schedulers.newElastic("publishOn-pool-b"))
                 .map(it -> {
-                    LogUtil.debug(it, "map"); // 运行在 publishOn-pool-b
+                    LogUtil.debug(it, "map2"); // 运行在 publishOn-pool-b
                     return it * 2;
                 })
                 .subscribe(it -> {
@@ -93,7 +97,7 @@ public class PublishOnSubscribeOnTest {
 
     @Test
     public void subscribeOnTest() {
-        Flux.range(1, 3)
+        Flux.just(1, 2, 3)
                 .filter(i -> {
                     LogUtil.debug(i, "filter"); // 运行在 subscribeOn-pool
                     return i % 2 == 0;
@@ -103,7 +107,6 @@ public class PublishOnSubscribeOnTest {
                     return it * 2;
                 })
                 .subscribeOn(Schedulers.newElastic("subscribeOn-pool"))
-//                .subscribeOn(Schedulers.fromExecutor(Executors.newCachedThreadPool()))
                 .subscribe(it -> {
                     LogUtil.debug(it, "subscribe"); // 运行在 subscribeOn-pool
                 });

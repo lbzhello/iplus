@@ -6,6 +6,7 @@ import reactor.core.scheduler.Schedulers;
 import xyz.liujin.iplus.util.LogUtil;
 import xyz.liujin.iplus.util.debug.DebugUtil;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 /**
@@ -22,13 +23,26 @@ import java.util.concurrent.Executors;
  * @modify by reason :{原因}
  **/
 public class SchedulersTest {
+    /**
+     * 线程调度示例
+     */
     @Test
     public void schedulersTest() {
-        Flux.just(1, 2)
-                .subscribeOn(Schedulers.fromExecutor(Executors.newCachedThreadPool()))
-                .subscribeOn(Schedulers.newParallel("p", 2))
-                .subscribe(it -> LogUtil.debug(it));
+        Flux.just(1, 2, 3)
+                .map(i -> i + 1)
+                // 切换下一个线程池
+                .publishOn(Schedulers.newElastic("publish-pool"))
+                .map(i -> i * 2)
+                // 配置订阅线程池（默认线程池）
+                .subscribeOn(Schedulers.newElastic("subscribe-pool"))
+                .subscribe(i -> System.out.println(i));
 
         DebugUtil.sleep(100);
+    }
+
+    @Test
+    public void ExecutorTest() {
+        Executors.newSingleThreadExecutor();
+        Executors.newCachedThreadPool();
     }
 }

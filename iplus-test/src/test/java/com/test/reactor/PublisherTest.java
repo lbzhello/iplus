@@ -2,6 +2,7 @@ package com.test.reactor;
 
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
+import org.springframework.scheduling.annotation.Schedules;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.SynchronousSink;
@@ -17,19 +18,7 @@ import java.util.function.Function;
 public class PublisherTest {
 
     public static void main(String[] args) {
-        Function<Integer, Integer> f1 = x -> x + 1;
-        Function<Integer, Integer> f2 = x -> x * 2;
 
-        Flux.just(1, 2, 3)
-                .map(f1)
-                .map(f2)
-                .subscribe();
-
-        // 可以被优化成
-        Function<Integer, Integer> f3 = x -> f2.apply(f1.apply(x));
-        Flux.just(1, 2, 3)
-                .map(f3)
-                .subscribe();
     }
 
     /**

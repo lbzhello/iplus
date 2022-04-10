@@ -11,6 +11,7 @@ import xyz.liujin.iplus.util.math.MathUtil;
 
 import java.time.Duration;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class OperatorTest {
     @Test
@@ -197,5 +198,25 @@ public class OperatorTest {
                 // 放大两倍
                 .map(it -> it * 2)
                 .subscribe(it -> LogUtil.debug(it));
+    }
+
+    /**
+     * 操作符融合
+     */
+    @Test
+    public void fusionTest() {
+        Function<Integer, Integer> f1 = x -> x + 1;
+        Function<Integer, Integer> f2 = x -> x * 2;
+
+        Flux.just(1, 2, 3)
+                .map(f1)
+                .map(f2)
+                .subscribe();
+
+        // 可以被优化成
+        Function<Integer, Integer> f3 = x -> f2.apply(f1.apply(x));
+        Flux.just(1, 2, 3)
+                .map(f3)
+                .subscribe();
     }
 }
