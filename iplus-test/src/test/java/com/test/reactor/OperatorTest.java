@@ -15,6 +15,18 @@ import java.util.function.Function;
 
 public class OperatorTest {
     @Test
+    public void delayElementsTest() {
+        Flux.range(1, 5)
+                // 每 1 秒发射一个元素
+                .delayElements(Duration.ofSeconds(1))
+                .subscribe(it -> {
+                    LogUtil.debug(it);
+                });
+
+        DebugUtil.sleep(10000);
+    }
+
+    @Test
     public void collectList() {
         Flux.range(1, 10)
                 // 收集元素，组成列表

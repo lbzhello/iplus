@@ -1,7 +1,9 @@
 package com.test.reactor;
 
+import org.apache.commons.logging.Log;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 import org.springframework.scheduling.annotation.Schedules;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
@@ -46,6 +48,7 @@ public class PublisherTest {
         Flux.fromArray(new Integer[]{1, 2, 3})
                 .subscribe(it -> LogUtil.debug(it, "fromArray"));
 
+        // 延迟创建发布者（订阅时创建）
         Flux.defer(() -> Flux.just(1, 2, 3))
                 .subscribe(it -> LogUtil.debug(it, "defer"));
 
@@ -54,6 +57,43 @@ public class PublisherTest {
                 .subscribe(it -> LogUtil.debug(it, "interval"));
 
         DebugUtil.sleep(200);
+    }
+
+    /**
+     * 延迟创建发布者（订阅时创建）
+     */
+    @Test
+    public void deferTest() {
+        Flux<Integer> deferFlux = Flux.defer(() -> {
+            return Flux.from(new Publisher<Integer>() {
+                {
+                    // 不会打印，因为延迟创建
+                    LogUtil.debug("create publisher", "defer");
+                }
+
+                @Override
+                public void subscribe(Subscriber<? super Integer> s) {
+                    s.onNext(1);
+                    s.onNext(2);
+                    s.onComplete();
+                }
+            });
+        });
+
+        Flux<Object> createFlux = Flux.from(new Publisher<Integer>() {
+            {
+                // 直接打印
+                LogUtil.debug("create publisher", "from");
+            }
+
+            @Override
+            public void subscribe(Subscriber<? super Integer> s) {
+                s.onNext(1);
+                s.onNext(2);
+                s.onComplete();
+            }
+        });
+
     }
 
     @Test
