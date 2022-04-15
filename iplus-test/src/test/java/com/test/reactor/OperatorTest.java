@@ -133,6 +133,25 @@ public class OperatorTest {
     }
 
     /**
+     * zip 异步流压缩
+     */
+    @Test
+    public void zipAsyncTest() {
+        Flux<Integer> intFlux = Flux.just(1, 2, 3, 4).delayElements(Duration.ofMillis(100))
+                .doOnNext(it -> LogUtil.debug(it, "intFlux-doOnNext"));
+
+        Flux<String> strFlux = Flux.just("a", "b", "c").delayElements(Duration.ofMillis(200))
+                .doOnNext(it -> LogUtil.debug(it, "strFlux-doOnNext"));
+
+        // 发射 [1, "a"], [2, "b"], [3, "C"]
+        Flux.zip(intFlux, strFlux)
+                .publishOn(Schedulers.newElastic("zip-pool"))
+                .subscribe(it -> LogUtil.debug(it, "zip-subscribe"));
+
+        DebugUtil.sleep(1000);
+    }
+
+    /**
      * 压缩，从每个流取出一个元素，结合成元祖/数组发射给下游；
      * 其中一个流发射 onComplete 事件则结束，多余的事件不在发出；
      */

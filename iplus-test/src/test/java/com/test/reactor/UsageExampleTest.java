@@ -14,10 +14,11 @@ import xyz.liujin.iplus.util.math.MathUtil;
 public class UsageExampleTest {
 
     /**
+     * 方式 2
      * A -> B, C
      * D -> B
      * C, E -> F
-     *
+     * 即：
      * A, D -> B, C, E -> F
      */
     @Test
@@ -30,6 +31,7 @@ public class UsageExampleTest {
     }
 
     /**
+     * 方式 1
      * A -> B, C
      * D -> B
      * C, E -> F
@@ -76,7 +78,8 @@ public class UsageExampleTest {
 
         DebugUtil.sleep(1000);
     }
-    
+
+    // 模拟任务
     public Mono<String> task(String task) {
         return Mono.just(task)
                 .doOnNext(it -> {

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.springframework.scheduling.annotation.Schedules;
+import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.SynchronousSink;
@@ -20,6 +21,29 @@ import java.util.function.Function;
 public class PublisherTest {
 
     public static void main(String[] args) {
+
+    }
+
+    @Test
+    public void processorTest() {
+        EmitterProcessor<Object> emitterProcessor = EmitterProcessor.create();
+        emitterProcessor.publishOn(Schedulers.newElastic("newThread")).map(it -> {
+            LogUtil.debug("map");
+            return it;
+        }).onErrorContinue((e, it) -> {
+            System.out.println(it);
+        }).subscribe(it -> {
+            LogUtil.debug("subscribe");
+            System.out.println(it);
+        }, e -> {
+            LogUtil.debug("onError");
+            System.out.println(e.getMessage());
+        });
+
+        emitterProcessor.onNext(1);
+        emitterProcessor.onNext(1);
+        emitterProcessor.onNext(1);
+        emitterProcessor.onComplete();
 
     }
 
@@ -48,7 +72,7 @@ public class PublisherTest {
         Flux.fromArray(new Integer[]{1, 2, 3})
                 .subscribe(it -> LogUtil.debug(it, "fromArray"));
 
-        // 延迟创建发布者（订阅时创建）
+        // 延迟创建发布者（订阅时创建），由 from 包装，不支持异步
         Flux.defer(() -> Flux.just(1, 2, 3))
                 .subscribe(it -> LogUtil.debug(it, "defer"));
 
@@ -155,7 +179,6 @@ public class PublisherTest {
             s.onNext(2);
             s.onComplete(); // onComplete 不要忘记
         })
-//                .subscribeOn(Schedulers.newElastic("subscribeOn-pool"))
                 .subscribe(it -> {
                     LogUtil.debug(it);
                 });
