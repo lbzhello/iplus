@@ -106,6 +106,10 @@ subprojects {
         // webflux -- reactor-core
         implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux'
 
+        // aop
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
+
+
         // RxJava3
         implementation group: 'io.reactivex.rxjava3', name: 'rxjava', version: rxjava.version
 
