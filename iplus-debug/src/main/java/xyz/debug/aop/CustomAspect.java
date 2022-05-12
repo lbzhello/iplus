@@ -18,8 +18,9 @@ public class CustomAspect {
     public void pointcut() {}
 
     @Before("pointcut()")
-    public void beforeMethod(JoinPoint joinPoint) {
+    public void before(JoinPoint joinPoint) {
         logger.info("================ aop @Before start ================");
+        logger.info("pointcut: {}", joinPoint);
 
         Signature signature = joinPoint.getSignature();
         String typeName = signature.getDeclaringTypeName();

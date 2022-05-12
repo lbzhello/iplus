@@ -22,11 +22,12 @@ public class ControllerAspect {
     private static final Logger logger = LoggerFactory.getLogger(ControllerAspect.class);
 
     @Pointcut("@within(org.springframework.stereotype.Controller) || @within(org.springframework.web.bind.annotation.RestController)")
-    public void controllerPointcut() {}
+    public void pointcut() {}
 
-    @Around("controllerPointcut()")
+    @Around("pointcut()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         logger.info("================ aop @Around start ================");
+        logger.info("pointcut: {}", joinPoint);
 
         Signature signature = joinPoint.getSignature();
         String typeName = signature.getDeclaringTypeName();
