@@ -6,4 +6,5 @@ dependencies {
     // 引入根目录 libs 下的 jar 包
     implementation fileTree(dir:'libs',includes:['*jar'])
 
+    implementation project(":iplus-debug")
 }

@@ -21,12 +21,12 @@ import java.util.Arrays;
 public class ControllerAspect {
     private static final Logger logger = LoggerFactory.getLogger(ControllerAspect.class);
 
-    @Pointcut(value = "@within(org.springframework.stereotype.Controller) || @within(org.springframework.web.bind.annotation.RestController)")
+    @Pointcut("@within(org.springframework.stereotype.Controller) || @within(org.springframework.web.bind.annotation.RestController)")
     public void controllerPointcut() {}
 
     @Around("controllerPointcut()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-        logger.info("================ controller aop start ================");
+        logger.info("================ aop @Around start ================");
 
         Signature signature = joinPoint.getSignature();
         String typeName = signature.getDeclaringTypeName();
@@ -39,7 +39,7 @@ public class ControllerAspect {
         Object proceed = joinPoint.proceed();
         logger.info("result: {}", proceed);
 
-        logger.info("================ controller aop end ================");
+        logger.info("================ aop @Around end ================");
         return proceed;
     }
 
