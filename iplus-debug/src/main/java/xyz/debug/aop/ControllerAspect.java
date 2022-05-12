@@ -21,7 +21,7 @@ import java.util.Arrays;
 public class ControllerAspect {
     private static final Logger logger = LoggerFactory.getLogger(ControllerAspect.class);
 
-    @Pointcut("@within(org.springframework.stereotype.Controller) || @within(org.springframework.web.bind.annotation.RestController)")
+    @Pointcut("@within(org.springframework.web.bind.annotation.RestController)")
     public void pointcut() {}
 
     @Around("pointcut()")

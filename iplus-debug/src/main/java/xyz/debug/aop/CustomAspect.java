@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class CustomAspect {
     private static final Logger logger = LoggerFactory.getLogger(CustomAspect.class);
 
-    @Pointcut("execution(* xyz.liujin..*(..))")
+    @Pointcut("execution(* xyz.liujin..*(..)) && !@within(org.springframework.web.bind.annotation.RestController)")
     public void pointcut() {}
 
     @Around("pointcut()")
