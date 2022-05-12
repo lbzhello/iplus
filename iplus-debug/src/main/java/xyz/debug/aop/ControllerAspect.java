@@ -26,21 +26,17 @@ public class ControllerAspect {
 
     @Around("pointcut()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-        logger.info("================ aop @Around start ================");
-        logger.info("pointcut: {}", joinPoint);
+        logger.info("================ aop start ================");
+        logger.info("{}", joinPoint);
 
-        Signature signature = joinPoint.getSignature();
-        String typeName = signature.getDeclaringTypeName();
-        String methodName = signature.getName();
         logger.info("url: {}", getUrl(joinPoint));
-        logger.info("method: {}.{}", typeName, methodName);
         Object args = joinPoint.getArgs(); // 防止 log 将数组当成多个参数
         logger.info("args: {}", args);
 
         Object proceed = joinPoint.proceed();
         logger.info("result: {}", proceed);
 
-        logger.info("================ aop @Around end ================");
+        logger.info("================ aop end ================");
         return proceed;
     }
 
