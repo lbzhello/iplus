@@ -27,6 +27,7 @@ public class ControllerAspect {
     @Around("pointcut()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         logger.info("================ aop start ================");
+        long start = System.currentTimeMillis();
         logger.info("{}", joinPoint);
 
         logger.info("url: {}", getUrl(joinPoint));
@@ -36,7 +37,8 @@ public class ControllerAspect {
         Object proceed = joinPoint.proceed();
         logger.info("result: {}", proceed);
 
-        logger.info("================ aop end ================");
+        long end = System.currentTimeMillis();
+        logger.info("================ aop end ================ cost: {} ms", end - start);
         return proceed;
     }
 

@@ -19,6 +19,7 @@ public class CustomAspect {
     @Around("pointcut()")
     public Object before(ProceedingJoinPoint joinPoint) throws Throwable {
         logger.info("================ aop start ================");
+        long start = System.currentTimeMillis();
         logger.info("{}", joinPoint);
 
         Object args = joinPoint.getArgs(); // 防止 log 将数组当成多个参数
@@ -27,7 +28,8 @@ public class CustomAspect {
         Object proceed = joinPoint.proceed();
         logger.info("result: {}", proceed);
 
-        logger.info("================ aop end ================");
+        long end = System.currentTimeMillis();
+        logger.info("================ aop end ================  cost: {} ms", end - start);
         return proceed;
     }
 
