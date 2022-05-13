@@ -1,12 +1,12 @@
-package xyz.liujin.iplus.spring.controller;
+package xyz.liujin.start.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("test")
-public class TestController {
+@RequestMapping("start")
+public class StartController {
 
     @Autowired
     private ApplicationContext applicationContext;

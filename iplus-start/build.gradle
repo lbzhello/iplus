@@ -1,7 +1,12 @@
 apply plugin: 'java'
-// springboot 启动类配置插件，自动识别 mainClassName
+// 可以将 springboot 项目打包成独立可运行的 jar; 自动识别 mainClassName; build 时打包所有依赖; jar 时不生成 jar 包;
 apply plugin: 'org.springframework.boot'
 
 dependencies {
+    // 引入根目录 libs 下的 jar 包
+    implementation fileTree(dir:'libs',includes:['*jar'])
+
+    implementation project(":iplus-debug")
+
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
 }

@@ -1,13 +1,13 @@
-package xyz.liujin.iplus;
+package xyz.liujin.start;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class IplusApplication {
+public class StartApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(IplusApplication.class, args);
+		SpringApplication.run(StartApplication.class, args);
 	}
 
 }
