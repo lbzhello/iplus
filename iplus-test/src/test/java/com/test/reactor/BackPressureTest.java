@@ -22,12 +22,12 @@ public class BackPressureTest {
         Flux.create(new Consumer<FluxSink<Integer>>() {
             @Override
             public void accept(FluxSink<Integer> fluxSink) {
-                Flux.range(1, 10).subscribe(i -> {
+                for (int i = 1; i <= 10; i++) {
                     // 模拟上游处理速度较快
                     DebugUtil.sleep(10);
                     System.out.println(("publish >>> " + i));
                     fluxSink.next(i);
-                });
+                }
 
                 fluxSink.complete();
             }
@@ -48,12 +48,12 @@ public class BackPressureTest {
         Flux.create(new Consumer<FluxSink<Integer>>() {
             @Override
             public void accept(FluxSink<Integer> fluxSink) {
-                Flux.range(1, 10).subscribe(i -> {
+                for (int i = 1; i <= 10; i++) {
                     // 模拟上游处理速度较快
                     DebugUtil.sleep(10);
                     System.out.println(("publish >>> " + i));
                     fluxSink.next(i);
-                });
+                }
 
                 fluxSink.complete();
             }

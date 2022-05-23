@@ -39,7 +39,7 @@ public class UsageExampleTest {
     @Test
     public void abcdef() {
         // D -> B
-        Mono<String> db = task("D").flatMap(d -> task("B"));
+        Flux<String> db = task("D").flatMap(d -> task("B"));
 
         // C, E -> F
         Flux<String> cef = Flux.zip(task("C"), task("E"))
@@ -47,7 +47,6 @@ public class UsageExampleTest {
 
         // A -> B, C
         task("A")
-                .flux()
                 .flatMap(a -> Flux.zip(db, cef))
                 .subscribe();
         DebugUtil.sleep(1000);
@@ -59,7 +58,6 @@ public class UsageExampleTest {
     @Test
     public void a_to_b_c() {
         task("A")
-                .flux()
                 .flatMap(it -> Flux.zip(task("B"), task("C")))
                 .subscribe();
 
@@ -80,8 +78,8 @@ public class UsageExampleTest {
     }
 
     // 模拟任务
-    public Mono<String> task(String task) {
-        return Mono.just(task)
+    public Flux<String> task(String task) {
+        return Flux.just(task)
                 .doOnNext(it -> {
                     LogUtil.debug("task start " + it);
 
@@ -92,6 +90,5 @@ public class UsageExampleTest {
                     LogUtil.debug("task end " + it);
                 })
                 .subscribeOn(Schedulers.newElastic("task-pool-" + task));
-
     }
 }

@@ -6,6 +6,19 @@ import xyz.liujin.iplus.util.LogUtil;
 
 public class ErrorTest {
     @Test
+    public void consumerErrorTest() {
+        Flux.range(1, 3)
+                .doOnNext(it -> System.out.println(it))
+                .subscribe(it -> {
+                    throw new IllegalStateException("consumer error");
+                }, e -> {
+                    LogUtil.debug(e.getMessage());
+                }, () -> {
+                    System.out.println("onComplete");
+                });
+    }
+
+    @Test
     public void onErrorStopTest() {
         Flux.range(1, 5)
                 .doOnNext(it -> {

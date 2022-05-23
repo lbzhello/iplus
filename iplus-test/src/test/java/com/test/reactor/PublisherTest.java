@@ -217,6 +217,8 @@ public class PublisherTest {
     @Test
     public void just() {
         Flux.just("hello world")
-                .subscribe(it -> LogUtil.debug(it));
+                .subscribe(it -> System.out.println(it),
+                        e -> System.out.println(e),
+                        () -> System.out.println("onComplete"));
     }
 }
