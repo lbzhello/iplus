@@ -77,7 +77,26 @@ public class UsageExampleTest {
         DebugUtil.sleep(1000);
     }
 
-    // 模拟任务
+    /**
+     * A -> B
+     */
+    @Test
+    public void a_to_b() {
+        task("A")
+                .flatMap(b -> task("B"))
+                .subscribe();
+
+        DebugUtil.sleep(1000);
+    }
+
+    @Test
+    public void taskTest() {
+        task("A").subscribe();
+
+        DebugUtil.sleep(100);
+    }
+
+    // 模拟异步任务
     public Flux<String> task(String task) {
         return Flux.just(task)
                 .doOnNext(it -> {
@@ -87,7 +106,7 @@ public class UsageExampleTest {
                     int random = MathUtil.randomInt(100);
                     DebugUtil.sleep(random);
 
-                    LogUtil.debug("task end " + it);
+                    LogUtil.debug("task end " + it + " cost: " + random);
                 })
                 .subscribeOn(Schedulers.newElastic("task-pool-" + task));
     }

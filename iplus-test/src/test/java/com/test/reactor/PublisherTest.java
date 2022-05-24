@@ -15,6 +15,7 @@ import xyz.liujin.iplus.util.debug.DebugUtil;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -215,10 +216,16 @@ public class PublisherTest {
     }
 
     @Test
-    public void just() {
+    public void helloWorld() {
         Flux.just("hello world")
-                .subscribe(it -> System.out.println(it),
-                        e -> System.out.println(e),
-                        () -> System.out.println("onComplete"));
+                .subscribe(System.out::println);
+
+        // 更完整的栗子
+        Flux.just("hello world")
+                .map(it -> it) // 运算符
+                .subscribeOn(Schedulers.parallel()) // 线程调度
+                .subscribe(it -> System.out.println(it), // 消费者
+                        e -> System.out.println(e), // 异常处理
+                        () -> System.out.println("onComplete")); // 完成时调用
     }
 }
