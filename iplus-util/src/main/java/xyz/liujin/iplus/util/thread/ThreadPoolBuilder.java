@@ -67,7 +67,7 @@ public class ThreadPoolBuilder {
         return this;
     }
 
-    public ThreadPoolBuilder workQueue(BlockingDeque<Runnable> workQueue) {
+    public ThreadPoolBuilder workQueue(BlockingQueue<Runnable> workQueue) {
         this.workQueue = workQueue;
         return this;
     }
