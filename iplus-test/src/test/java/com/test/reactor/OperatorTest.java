@@ -14,6 +14,20 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class OperatorTest {
+
+    /**
+     * 阻塞运行
+     */
+    @Test
+    public void blockTest() {
+        Integer block = Flux.range(1, 5)
+                .subscribeOn(Schedulers.newElastic("subs-pool"))
+                .reduce(Math::addExact)
+                .block();
+
+        LogUtil.debug(block);
+    }
+
     @Test
     public void delayElementsTest() {
         Flux.range(1, 5)

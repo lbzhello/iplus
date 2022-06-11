@@ -6,6 +6,9 @@ group 'xyz.liujin'
 version '0.0.1-SNAPSHOT'
 
 dependencies {
+    // https://mvnrepository.com/artifact/cn.hutool/hutool-all
+    implementation group: 'cn.hutool', name: 'hutool-all', version: '5.8.2'
+
     implementation 'org.codehaus.groovy:groovy-all:2.3.11'
 
     // truffle 语言框架
