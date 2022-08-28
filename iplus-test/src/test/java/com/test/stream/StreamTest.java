@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.liujin.iplus.util.LogUtil;
+import xyz.liujin.iplus.util.debug.DebugUtil;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -14,6 +15,21 @@ import java.util.stream.Stream;
 
 public class StreamTest {
     private static final Logger logger = LoggerFactory.getLogger(StreamTest.class);
+
+    /**
+     * parallel 是异步的，但是 forEach 会同步等待结果
+     */
+    @Test
+    public void parallelTest() {
+        logger.debug("start");
+        Stream.of(1, 2, 3, 4)
+                .parallel()
+                .forEach(it -> {
+                    DebugUtil.sleep(2000);
+                    logger.debug("resp " + it);
+                });
+        logger.debug("end");
+    }
 
     /**
      * stream 消费之后不可重用
