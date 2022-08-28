@@ -11,4 +11,5 @@ include 'iplus-spring'
 include 'iplus-netty'
 include 'iplus-consul'
 include 'iplus-debug'
+include 'iplus-algorithm'
 
