@@ -1,13 +1,14 @@
 package xyz.liujin.start;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
-import xyz.debug.aop.CustomAspect;
+import xyz.debug.DebugConfig;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {""})
 public class StartApplication {
+	@Autowired
+	private DebugConfig debugConfig;
 
 	public static void main(String[] args) {
 		SpringApplication.run(StartApplication.class, args);
