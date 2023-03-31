@@ -3,7 +3,7 @@ buildscript {
     print("hello iplus")
 
     ext {
-        springBootVersion = '2.3.2.RELEASE'
+        springBootVersion = '3.0.5'
     }
 
     repositories {
